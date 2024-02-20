@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ClothingStoreApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cart">Giỏ hàng</string>
+    <string name="shopname">ptitshop</string>
+</resources>
