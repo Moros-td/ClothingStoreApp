@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="16dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+            <ImageView
+                android:id="@+id/imageView_product"
+                android:layout_width="89dp"
+                android:layout_height="145dp"
+                android:layout_marginStart="3dp"
+                android:src="@drawable/product_image_test"/>
+<!--            <LinearLayout-->
+<!--                android:orientation="vertical"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center">-->
+
+
+
+<!--                <LinearLayout-->
+
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content">-->
+
+
+
+<!--                </LinearLayout>-->
+
+<!--            </LinearLayout>-->
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp">
+            <View
+                android:id="@+id/view_product_color"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/circle_background_blue" />
+            <TextView
+                android:id="@+id/textView_product_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SP1701934515"
+                android:textSize="15sp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:visibility="gone"/>
+            <TextView
+                android:id="@+id/textView_product_quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="42"
+                android:textColor="@android:color/black"/>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/textView_product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:paddingBottom="5dp"
+            android:text="ÁO THUN TRƠN CỔ ĐỨC KHUY NGỌC TRAI"
+            android:textColor="@android:color/black"
+            android:textSize="17sp" />
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:id="@+id/textView_product_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:text="500.000d"
+                android:textColor="@android:color/black"
+                android:textSize="17sp" />
+            <TextView
+                android:id="@+id/space"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:text="                   "
+                android:textColor="@android:color/black"
+                android:textSize="17sp" />
+            <ImageView
+                android:id="@+id/imageView_edit_product"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/outline_delete_24" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
