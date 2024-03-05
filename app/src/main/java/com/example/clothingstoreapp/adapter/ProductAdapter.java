@@ -25,7 +25,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public ProductAdapter(List<ProductEntity> listProduct) {
 
-        this.listProduct = listProduct;
+        //this.listProduct = listProduct;
         this.listProductOld = listProduct;
     }
 
