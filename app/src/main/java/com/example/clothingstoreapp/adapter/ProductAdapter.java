@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
 import com.example.clothingstoreapp.entity.ProductEntity;
 
 import java.util.ArrayList;
@@ -22,10 +23,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     private List<ProductEntity> listProduct;
     private List<ProductEntity> listProductOld;
-
-    public ProductAdapter(List<ProductEntity> listProduct) {
+    private IClickItemProductListener iClickItemProductListener;
+    public ProductAdapter(List<ProductEntity> listProduct, IClickItemProductListener listener) {
 
         //this.listProduct = listProduct;
+        this.iClickItemProductListener = listener;
         this.listProductOld = listProduct;
     }
 
@@ -49,6 +51,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         String priceString = String.format(Locale.getDefault(), "%.2fđ", productEntity.getProductPrice());
         holder.textViewProductPrice.setText(priceString);
         holder.textViewProductQuantity.setText(String.valueOf(productEntity.getProductQuantity()));
+        // sự kiện click nút thêm sản phẩm
+
+        if(iClickItemProductListener != null){
+            holder.imageViewAddProduct.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Log.d("oke", "onClick: ");
+                    iClickItemProductListener.onClickAddProduct(productEntity);
+                }
+            });
+        }
     }
 
     @Override
@@ -98,7 +111,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public class ProductViewHolder extends RecyclerView.ViewHolder{
 
-        private ImageView imageViewProduct;
+        private ImageView imageViewProduct, imageViewAddProduct;
         private TextView textViewProductCode, textViewProductName,
                 textViewProductQuantity, textViewProductPrice;
 
@@ -112,6 +125,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             textViewProductQuantity = itemView.findViewById(R.id.textView_product_quantity);
             textViewProductPrice = itemView.findViewById(R.id.textView_product_price);
             viewProductColor = itemView.findViewById(R.id.view_product_color);
+            imageViewAddProduct = itemView.findViewById(R.id.imageView_add_product);
         }
 
     }

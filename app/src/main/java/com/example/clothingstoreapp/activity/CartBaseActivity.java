@@ -3,6 +3,9 @@ package com.example.clothingstoreapp.activity;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,13 +15,21 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.entity.ProductEntity;
+import com.example.clothingstoreapp.fragment.CartEmptyFragment;
+import com.example.clothingstoreapp.fragment.CartExistFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CartBaseActivity extends AppCompatActivity {
 
     Toolbar toolbarCart;
     ImageView backButtonCart;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +38,25 @@ public class CartBaseActivity extends AppCompatActivity {
 
         initView();
         setEvent();
+
+        //test cart empty or exist
+        Fragment fragment;
+//        fragment = new CartEmptyFragment();
+//        replaceFragment(fragment);
+        fragment = new CartExistFragment();
+        replaceFragment(fragment);
     }
+
 
     public void initView() {
         toolbarCart = findViewById(R.id.toolbar_cart);
         setSupportActionBar(toolbarCart);
-        if(getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             // set hiện nút back
-             //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         backButtonCart = findViewById(R.id.backButtonCart);
+
     }
 
     public void setEvent() {
@@ -73,6 +93,12 @@ public class CartBaseActivity extends AppCompatActivity {
         });
     }
 
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.containerCart, fragment);
+        fragmentTransaction.commit();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 

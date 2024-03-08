@@ -1,6 +1,8 @@
 package com.example.clothingstoreapp.entity;
 
-public class ProductEntity {
+import java.io.Serializable;
+
+public class ProductEntity implements Serializable {
     private String productCode;
     private String productName;
     private String productColor;

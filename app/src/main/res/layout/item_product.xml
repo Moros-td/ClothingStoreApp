@@ -9,18 +9,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:layout_marginBottom="5dp">
+
             <ImageView
                 android:id="@+id/imageView_product"
-                android:layout_width="89dp"
-                android:layout_height="145dp"
-                android:layout_marginStart="3dp"
-                android:src="@drawable/product_image_test"/>
+                android:layout_width="160dp"
+                android:layout_height="190dp"
+                android:src="@drawable/product_image_test" />
 <!--            <LinearLayout-->
 <!--                android:orientation="vertical"-->
 <!--                android:layout_marginStart="10dp"-->
@@ -96,23 +97,17 @@
                 android:id="@+id/textView_product_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
                 android:text="500.000d"
                 android:textColor="@android:color/black"
-                android:textSize="17sp" />
-            <TextView
-                android:id="@+id/space"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:text="                   "
-                android:textColor="@android:color/black"
-                android:textSize="17sp" />
+                android:textSize="17sp"
+                android:layout_marginRight="70dp"/>
+
             <ImageView
-                android:id="@+id/imageView_edit_product"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/outline_delete_24" />
+                android:id="@+id/imageView_add_product"
+                android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/outline_shopping_bag_24"
+            android:scaleType="fitCenter" />
 
         </LinearLayout>
 
