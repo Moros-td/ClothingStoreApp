@@ -11,10 +11,10 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/account_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:menu="@menu/menu_account"
+        app:menu="@menu/menu_account_after_login"
         app:itemTextAppearance="@style/menu_account_text_style" />
 </FrameLayout>

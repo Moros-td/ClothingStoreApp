@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
@@ -89,10 +90,35 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 // Xử lý khi người dùng bấm nút back
-                // nếu có fragment trong backstack thì pop
+                // nếu có hơn 1 fragment trong backstack thì pop
                 if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
 
                     getSupportFragmentManager().popBackStack();
+                    // Lấy ra fragment hiện tại trong back stack
+                    //-2 là do hết hàm này thì số lượng trong stack mới update
+                    FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 2);
+                    String fragmentTag = backEntry.getName();
+                    // So sánh với các fragment đã khai báo
+                    //Toast.makeText(BaseActivity.this, String.valueOf(getSupportFragmentManager().getBackStackEntryCount()), Toast.LENGTH_LONG).show();
+                    if (fragmentTag != null) {
+                        if (fragmentTag.equals("HomeFragment")) {
+                            currentFragment = FRAGMENT_HOME;
+                            bottomNavigationView.getMenu().findItem(R.id.action_home).setChecked(true);
+                        } else if (fragmentTag.equals("ProductFragment")) {
+                            currentFragment = FRAGMENT_PRODUCT;
+                            bottomNavigationView.getMenu().findItem(R.id.action_product).setChecked(true);
+                        } else if (fragmentTag.equals("SearchFragment")) {
+                            currentFragment = FRAGMENT_SEARCH;
+                            bottomNavigationView.getMenu().findItem(R.id.action_search).setChecked(true);
+                        } else if (fragmentTag.equals("HelpFragment")) {
+                            currentFragment = FRAGMENT_HELP;
+                            bottomNavigationView.getMenu().findItem(R.id.action_help).setChecked(true);
+                        } else if (fragmentTag.equals("AccountFragment")) {
+                            currentFragment = FRAGMENT_ACCOUNT;
+                            bottomNavigationView.getMenu().findItem(R.id.action_account).setChecked(true);
+                        }
+                        //getSupportFragmentManager().popBackStack();
+                    }
                 } else {
                     // Thực hiện hành động mặc định khi không có fragment trên back stack
                     finish();
@@ -220,11 +246,30 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    private String getFragmentName(Fragment fragment) {
+        // Tùy thuộc vào loại hoặc nội dung của fragment, bạn có thể tạo một FragmentTag tương ứng
+        if (fragment instanceof HomeFragment) {
+            return "HomeFragment";
+        } else if (fragment instanceof ProductFragment) {
+            return "ProductFragment";
+        } else if (fragment instanceof SearchFragment) {
+            return "SearchFragment";
+        } else if (fragment instanceof HelpFragment) {
+            return "HelpFragment";
+        } else if (fragment instanceof AccountFragment) {
+            return "AccountFragment";
+        } else {
+            // Nếu không thì trả về một tag mặc định hoặc null
+            return "DefaultFragment";
+        }
+    }
+
     // chuyển frame
     public void replaceFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
-        fragmentTransaction.addToBackStack(null);
+        String fragmentTag = getFragmentName(fragment);
+        fragmentTransaction.addToBackStack(fragmentTag);
         fragmentTransaction.commit();
     }
 

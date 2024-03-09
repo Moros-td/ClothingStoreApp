@@ -7,11 +7,6 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/notiItem"
-            android:enabled="true"
-            android:icon="@drawable/baseline_notifications_24"
-            android:title="Thông báo của tôi" />
-        <item
             android:id="@+id/loginItem"
             android:enabled="true"
             android:icon="@drawable/baseline_login_24"
