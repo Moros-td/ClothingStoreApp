@@ -13,6 +13,12 @@
         android:theme="@style/Theme.ClothingStoreApp"
         tools:targetApi="31">
         <activity
+            android:name=".activity.AuthenticationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AccountInfoActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.CartBaseActivity"
             android:exported="false" />
         <activity

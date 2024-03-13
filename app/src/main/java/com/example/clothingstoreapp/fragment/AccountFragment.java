@@ -1,5 +1,6 @@
 package com.example.clothingstoreapp.fragment;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -24,6 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.activity.AccountInfoActivity;
+import com.example.clothingstoreapp.activity.AuthenticationActivity;
+import com.example.clothingstoreapp.activity.BaseActivity;
+import com.example.clothingstoreapp.activity.CartBaseActivity;
 import com.google.android.material.navigation.NavigationView;
 
 public class AccountFragment extends Fragment {
@@ -36,7 +41,7 @@ public class AccountFragment extends Fragment {
         View mview = inflater.inflate(R.layout.fragment_account, container, false);
         navigationView = mview.findViewById(R.id.account_view);
 
-        String token = "a";
+        String token = "b";
         if(token.isEmpty()){
             navigationView.getMenu().clear();
             navigationView.inflateMenu(R.menu.menu_account);
@@ -47,8 +52,9 @@ public class AccountFragment extends Fragment {
                     int id = item.getItemId();
 
                     if(id == R.id.loginItem){
-                        Toast.makeText(getContext(), "hehe", Toast.LENGTH_LONG).show();
-                        return true;
+                        Intent authenticationActivity = new Intent(getContext(), AuthenticationActivity.class);
+
+                        startActivity(authenticationActivity);
                     }
 
                     return false;
@@ -68,7 +74,9 @@ public class AccountFragment extends Fragment {
 
                     }
                     if(id == R.id.manageAccountItem){
+                        Intent intent = new Intent(getContext(), AccountInfoActivity.class);
 
+                        startActivity(intent);
                     }
                     if(id == R.id.locationItem){
 

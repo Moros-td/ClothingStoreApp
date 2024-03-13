@@ -61,6 +61,13 @@ public class BaseActivity extends AppCompatActivity {
         replaceFragment(new HomeFragment());
     }
 
+    public void enableBack(){
+        if(getSupportActionBar() != null){
+            // set hiện nút back
+             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
     public void initView() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
          toolbar = findViewById(R.id.toolbar);

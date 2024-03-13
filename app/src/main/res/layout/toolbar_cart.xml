@@ -32,6 +32,7 @@
 
         <!-- Phần tử TextView cho tên PTITSHOP -->
         <TextView
+            android:id="@+id/textViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
