@@ -15,15 +15,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.activity.BaseActivity;
 import com.example.clothingstoreapp.activity.CartBaseActivity;
+import com.example.clothingstoreapp.adapter.AddressAdapter;
 import com.example.clothingstoreapp.adapter.CartAdapter;
 import com.example.clothingstoreapp.custom_interface.IClickItemCartListener;
 import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
+import com.example.clothingstoreapp.entity.AddressEntity;
 import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.ProductEntity;
 
@@ -35,6 +38,7 @@ public class CartExistFragment extends Fragment {
     private RecyclerView recyclerView;
     private CartBaseActivity cartBaseActivity;
     private View mView;
+    private Button btnOrder;
     private List<CartItemEnity> list;
     private IClickItemProductListener iClickItemProductListener;
 
@@ -49,8 +53,6 @@ public class CartExistFragment extends Fragment {
         //set layout manager cho rcv
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(cartBaseActivity);
         recyclerView.setLayoutManager(linearLayoutManager);
-        // set adapter cho rcv
-
 
         // Ánh xạ TextView của footer
         TextView totalPriceTextView = mView.findViewById(R.id.cart_totalPrice);
@@ -73,10 +75,23 @@ public class CartExistFragment extends Fragment {
             }
         });
 
+        //set adapter
         recyclerView.setAdapter(cartAdapter);
 
         // Gọi phương thức để cập nhật footer total
         footerTotal();
+        //chuyển đến trang địa chỉ
+        btnOrder = mView.findViewById(R.id.btn_order);
+        btnOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new CartAddressFragment();
+                FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.containerCart, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
         return mView;
     }
 

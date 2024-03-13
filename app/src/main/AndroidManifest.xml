@@ -21,6 +21,8 @@
         <activity
             android:name=".activity.CartBaseActivity"
             android:exported="false" />
+        <activity android:name=".activity.AddAddressActivity"
+            android:exported="false"/>
         <activity
             android:name=".activity.BaseActivity"
             android:exported="true">
