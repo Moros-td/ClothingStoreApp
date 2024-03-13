@@ -37,6 +37,10 @@ public class AddAddressFragment extends Fragment {
         districtList = new ArrayList<>();
         villageList = new ArrayList<>();
 
+        provinceList.add("Chọn tỉnh/thành phố");
+        districtList.add("Chọn quận/huyện");
+        villageList.add("Chọn phường/xã");
+
         // Khởi tạo và thiết lập adapter cho Spinner của quận/huyện và phường/xã
         districtAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, districtList);
         districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -53,15 +57,13 @@ public class AddAddressFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedProvince = (String) parent.getItemAtPosition(position);
-                districtList.clear();
-                villageList.clear();
-                districtList.add("Chọn quận/huyện");
-                villageList.add("Chọn phường/xã");
+                spinnerDistrict.setSelection(0);
                 loadDistricts(selectedProvince);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -70,13 +72,13 @@ public class AddAddressFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedDistrict = (String) parent.getItemAtPosition(position);
-                villageList.clear();
-                villageList.add("Chọn phường/xã");
+                spinnerVillage.setSelection(0);
                 loadVillages(selectedDistrict);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -85,7 +87,6 @@ public class AddAddressFragment extends Fragment {
 
     private void loadProvinces() {
         // Tạo danh sách tỉnh/thành phố
-        provinceList.add("Chọn tỉnh/thành phố");
         provinceList.add("Hồ Chí Minh");
         provinceList.add("Hà Nội");
         // Thêm các tỉnh/thành phố vào Spinner tỉnh/thành phố
@@ -114,6 +115,10 @@ public class AddAddressFragment extends Fragment {
         // Tải danh sách quận/huyện tương ứng với thành phố đã chọn từ Map
         List<String> selectedDistricts = districtMap.get(selectedProvince);
 
+        districtList.clear();
+        districtList.add("Chọn quận/huyện");
+        villageList.clear();
+        villageList.add("Chọn phường/xã");
         // Cập nhật danh sách quận/huyện vào Spinner quận/huyện
         if (selectedDistricts != null) {
             districtList.addAll(selectedDistricts);
@@ -154,7 +159,8 @@ public class AddAddressFragment extends Fragment {
 
         // Tải danh sách phường/xã tương ứng với quận/huyện đã chọn từ Map
         List<String> selectedVillages = villageMap.get(selectedDistrict);
-
+        villageList.clear();
+        villageList.add("Chọn phường/xã");
         // Cập nhật danh sách phường/xã vào Spinner phường/xã
         if (selectedVillages != null) {
             villageList.addAll(selectedVillages);
