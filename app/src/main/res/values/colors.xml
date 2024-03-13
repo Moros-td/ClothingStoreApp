@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="status_bar_color">#FD8638</color>
     <color name="red">#FA1100</color>
+    <color name="green">#36C402</color>
 </resources>

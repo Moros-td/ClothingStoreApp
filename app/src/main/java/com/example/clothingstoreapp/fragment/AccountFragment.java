@@ -26,9 +26,11 @@ import android.widget.Toast;
 
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.activity.AccountInfoActivity;
+import com.example.clothingstoreapp.activity.AddressManagementActivity;
 import com.example.clothingstoreapp.activity.AuthenticationActivity;
 import com.example.clothingstoreapp.activity.BaseActivity;
 import com.example.clothingstoreapp.activity.CartBaseActivity;
+import com.example.clothingstoreapp.activity.OrderManagementActivity;
 import com.google.android.material.navigation.NavigationView;
 
 public class AccountFragment extends Fragment {
@@ -71,7 +73,9 @@ public class AccountFragment extends Fragment {
                     int id = item.getItemId();
 
                     if(id == R.id.manageOrderItem){
+                        Intent intent = new Intent(getContext(), OrderManagementActivity.class);
 
+                        startActivity(intent);
                     }
                     if(id == R.id.manageAccountItem){
                         Intent intent = new Intent(getContext(), AccountInfoActivity.class);
@@ -79,7 +83,9 @@ public class AccountFragment extends Fragment {
                         startActivity(intent);
                     }
                     if(id == R.id.locationItem){
+                        Intent intent = new Intent(getContext(), AddressManagementActivity.class);
 
+                        startActivity(intent);
                     }
                     if(id == R.id.logoutItem){
                         Toast.makeText(getContext(), "hehe", Toast.LENGTH_LONG).show();
