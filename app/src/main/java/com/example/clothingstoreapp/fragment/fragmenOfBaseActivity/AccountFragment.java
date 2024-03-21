@@ -62,7 +62,7 @@ public class AccountFragment extends Fragment {
 
         sessionManager = new SessionManager(getContext());
         String token = "";
-        sessionManager.logout();
+
         if(sessionManager.isLoggedIn()){
             token = sessionManager.getJwt();
         }
