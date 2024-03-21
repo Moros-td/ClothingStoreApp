@@ -122,8 +122,6 @@ public class AccountFragment extends Fragment {
                 if(id == R.id.logoutItem){
                     dialog = BaseActivity.openLoadingDialog(getContext());
                     callApiLogout();
-                    BaseActivity baseActivity = (BaseActivity) getContext();
-                    baseActivity.initReplaceCurrentFragment(BaseActivity.FRAGMENT_ACCOUNT);
                 }
 
                 return false;
@@ -145,11 +143,14 @@ public class AccountFragment extends Fragment {
                     if(loginResponse != null){
                         if(loginResponse.getErr() != null)
                             Toast.makeText(getContext(), loginResponse.getErr(), Toast.LENGTH_LONG).show();
-                        else if (loginResponse.getToken() != null){
+                        else {
                             sessionManager = new SessionManager(getContext());
                             sessionManager.logout();
                             sessionManager.deleteCustom("email");
                             showMenuAfterLogin();
+
+                            BaseActivity baseActivity = (BaseActivity) getContext();
+                            baseActivity.initReplaceCurrentFragment(BaseActivity.FRAGMENT_ACCOUNT);
                         }
                     }
                     else {
@@ -169,6 +170,9 @@ public class AccountFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<LoginResponse> call, Throwable throwable) {
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                     Toast.makeText(getContext(), "Không thể truy cập api", Toast.LENGTH_LONG).show();
                 }
             });

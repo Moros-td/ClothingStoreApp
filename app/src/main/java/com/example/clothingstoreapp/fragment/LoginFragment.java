@@ -98,8 +98,8 @@ public class LoginFragment extends Fragment {
         customerEntity.setEmail(emailEditText.getText().toString());
         customerEntity.setPassword(passwordEditText.getText().toString());
 
-        ApiService.apiService.logIn(emailEditText.getText().toString(),
-                        passwordEditText.getText().toString())
+        ApiService.apiService.logIn(customerEntity.getEmail(),
+                        customerEntity.getPassword())
                 .enqueue(new Callback<LoginResponse>() {
                     @Override
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -110,7 +110,7 @@ public class LoginFragment extends Fragment {
                         LoginResponse loginResponse = response.body();
                         if(loginResponse != null){
                             if(loginResponse.getErr() != null)
-                                Toast.makeText(getContext(), loginResponse.getErr(), Toast.LENGTH_LONG).show();
+                                BaseActivity.openErrorDialog(getContext(), loginResponse.getErr());
                             else if (loginResponse.getToken() != null){
                                 sessionManager = new SessionManager(authenticationActivity);
                                 sessionManager.saveJwt(loginResponse.getToken());
@@ -137,7 +137,10 @@ public class LoginFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<LoginResponse> call, Throwable throwable) {
-                        Toast.makeText(getContext(), "Không thể truy cập api", Toast.LENGTH_LONG).show();
+                        if (dialog != null && dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+                        BaseActivity.openErrorDialog(getContext(), "Không thể truy cập api");
                     }
                 });
     }
