@@ -8,15 +8,24 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -280,4 +289,131 @@ public class BaseActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    public void initReplaceCurrentFragment(int fragmentNum) {
+
+        if(fragmentNum == FRAGMENT_ACCOUNT && fragmentNum == currentFragment){
+            replaceCurrentFragment(new AccountFragment());
+        }
+        else if(fragmentNum == FRAGMENT_PRODUCT && fragmentNum == currentFragment){
+            replaceCurrentFragment(new ProductFragment());
+        }
+        else if(fragmentNum == FRAGMENT_SEARCH && fragmentNum == currentFragment){
+            replaceCurrentFragment(new SearchFragment());
+        }
+    }
+
+    private void replaceCurrentFragment(Fragment fragment){
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+
+            getSupportFragmentManager().popBackStack();
+            // Lấy ra fragment hiện tại trong back stack
+            //-2 là do hết hàm này thì số lượng trong stack mới update
+            FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 2);
+
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.container, fragment);
+            String fragmentTag = getFragmentName(fragment);
+            fragmentTransaction.addToBackStack(fragmentTag);
+            fragmentTransaction.commit();
+        }
+    }
+
+
+    public static Dialog openLoadingDialog(Context context) {
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.loading_dialog);
+
+        Window window = dialog.getWindow();
+        if (window == null) {
+            return null;
+        }
+
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttr = window.getAttributes();
+        windowAttr.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttr);
+
+        // click ra ngoài thì tắt dialog
+        dialog.setCancelable(false);
+
+        dialog.show();
+        return dialog;
+    }
+
+    public static void openSuccessDialog(Context context, String message) {
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.success_dialog);
+
+        Window window = dialog.getWindow();
+        if (window == null) {
+            return;
+        }
+
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttr = window.getAttributes();
+        windowAttr.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttr);
+
+        // setView trên dialog
+        TextView successTextView = dialog.findViewById(R.id.successTextView);
+
+        successTextView.setText(message);
+
+        // Khởi tạo Handler
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Đóng dialog sau 3 giây
+                dialog.dismiss();
+            }
+        }, 2000); // Thời gian đợi 2 giây trước khi đóng dialog
+
+        // click ra ngoài thì tắt dialog
+        dialog.setCancelable(false);
+
+        dialog.show();
+    }
+
+    public static void openErrorDialog(Context context, String message) {
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.error_dialog);
+
+        Window window = dialog.getWindow();
+        if(window == null){
+            return;
+        }
+
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttr = window.getAttributes();
+        windowAttr.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttr);
+
+        // click ra ngoài thì tắt dialog
+        dialog.setCancelable(true);
+
+        // setView trên dialog
+        TextView errorTextView = dialog.findViewById(R.id.errorTextView);
+        Button oKConfirmBtn = dialog.findViewById(R.id.oKConfirmBtn);
+
+        errorTextView.setText(message);
+
+        //set event
+        oKConfirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
 }

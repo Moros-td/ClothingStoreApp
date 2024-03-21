@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
 import com.example.clothingstoreapp.entity.ProductEntity;
@@ -50,7 +51,48 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.textViewProductName.setText(productEntity.getProductName());
         String priceString = String.format(Locale.getDefault(), "%.2fđ", productEntity.getProductPrice());
         holder.textViewProductPrice.setText(priceString);
-        holder.textViewProductQuantity.setText(String.valueOf(productEntity.getProductQuantity()));
+
+        //set ảnh
+        String path = productEntity.getImages().get(0);
+        String pathImage = "";
+        if (path != null && path.length() > 1) {
+            String newPath = path.substring(1);
+            pathImage = "http://10.0.2.2:8096"+newPath;
+        }
+        Glide.with(holder.imageViewProduct).load(pathImage).into(holder.imageViewProduct);
+
+        // set màu
+        if(productEntity.getProductColor().equals("red")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_red);
+        }
+        else if(productEntity.getProductColor().equals("pink")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_pink);
+        }
+        else if(productEntity.getProductColor().equals("yellow")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_yellow);
+        }
+        else if(productEntity.getProductColor().equals("green")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.circle_backgound_green);
+        }
+        else if(productEntity.getProductColor().equals("blue")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_blue);
+        }
+        else if(productEntity.getProductColor().equals("beige")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.cirlce_background_beige);
+        }
+        else if(productEntity.getProductColor().equals("white")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_white);
+        }
+        else if(productEntity.getProductColor().equals("black")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.circle_backgound_black);
+        }
+        else if(productEntity.getProductColor().equals("brown")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_brown);
+        }
+        else if(productEntity.getProductColor().equals("gray")){
+            holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_gray);
+        }
+
         // sự kiện click nút thêm sản phẩm
 
         if(iClickItemProductListener != null){
@@ -113,7 +155,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         private ImageView imageViewProduct, imageViewAddProduct;
         private TextView textViewProductCode, textViewProductName,
-                textViewProductQuantity, textViewProductPrice;
+                textViewProductPrice;
 
         private View viewProductColor;
         public ProductViewHolder(@NonNull View itemView) {
@@ -122,7 +164,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             imageViewProduct = itemView.findViewById(R.id.imageView_product);
             textViewProductCode = itemView.findViewById(R.id.textView_product_code);
             textViewProductName = itemView.findViewById(R.id.textView_product_name);
-            textViewProductQuantity = itemView.findViewById(R.id.textView_product_quantity);
             textViewProductPrice = itemView.findViewById(R.id.textView_product_price);
             viewProductColor = itemView.findViewById(R.id.view_product_color);
             imageViewAddProduct = itemView.findViewById(R.id.imageView_add_product);

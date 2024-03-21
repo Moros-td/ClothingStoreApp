@@ -64,13 +64,6 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:visibility="gone"/>
-            <TextView
-                android:id="@+id/textView_product_quantity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="42"
-                android:textColor="@android:color/black"/>
 
         </LinearLayout>
 
