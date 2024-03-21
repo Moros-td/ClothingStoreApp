@@ -15,10 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.clothingstoreapp.R;
-import com.example.clothingstoreapp.fragment.AddressInfoFragment;
-import com.example.clothingstoreapp.fragment.AddressManagementFragment;
-import com.example.clothingstoreapp.fragment.OrderDetailFragment;
-import com.example.clothingstoreapp.fragment.OrderManagementFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfAddressManagementActivity.AddressInfoFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfAddressManagementActivity.AddressManagementFragment;
 
 public class AddressManagementActivity extends AppCompatActivity {
     Toolbar toolbar;

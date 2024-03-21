@@ -1,4 +1,4 @@
-package com.example.clothingstoreapp.fragment;
+package com.example.clothingstoreapp.fragment.fragmentOfAddressManagementActivity;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.example.clothingstoreapp.fragment;
+package com.example.clothingstoreapp.fragment.fragmentOfAuthenticationActivity;
 
 import android.os.Bundle;
 

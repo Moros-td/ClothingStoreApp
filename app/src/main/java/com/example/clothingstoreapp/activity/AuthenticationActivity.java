@@ -15,15 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.clothingstoreapp.R;
-import com.example.clothingstoreapp.fragment.AccountFragment;
-import com.example.clothingstoreapp.fragment.ForgotPasswordFragment;
-import com.example.clothingstoreapp.fragment.HelpFragment;
-import com.example.clothingstoreapp.fragment.HomeFragment;
-import com.example.clothingstoreapp.fragment.LoginFragment;
-import com.example.clothingstoreapp.fragment.ProductFragment;
-import com.example.clothingstoreapp.fragment.RegisterFragment;
-import com.example.clothingstoreapp.fragment.SearchFragment;
-import com.example.clothingstoreapp.fragment.VerificationFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfAuthenticationActivity.ForgotPasswordFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfAuthenticationActivity.LoginFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfAuthenticationActivity.RegisterFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfAuthenticationActivity.VerificationFragment;
 
 public class AuthenticationActivity extends AppCompatActivity {
     Toolbar toolbar;

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.LoginFragment">
+    tools:context=".fragment.fragmentOfAuthenticationActivity.LoginFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -48,6 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
+                android:inputType="textEmailAddress"
                 android:background="@drawable/white_radius_15"
                 android:padding="10dp"
                 android:textSize="20dp"/>

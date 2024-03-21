@@ -15,10 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.clothingstoreapp.R;
-import com.example.clothingstoreapp.fragment.AccountInfoFragment;
-import com.example.clothingstoreapp.fragment.OrderDetailFragment;
-import com.example.clothingstoreapp.fragment.OrderManagementFragment;
-import com.example.clothingstoreapp.fragment.PasswordChangeFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfOrdermanagementActivity.OrderDetailFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfOrdermanagementActivity.OrderManagementFragment;
 
 public class OrderManagementActivity extends AppCompatActivity {
     Toolbar toolbar;

@@ -15,12 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.clothingstoreapp.R;
-import com.example.clothingstoreapp.fragment.AccountInfoFragment;
-import com.example.clothingstoreapp.fragment.ForgotPasswordFragment;
-import com.example.clothingstoreapp.fragment.LoginFragment;
-import com.example.clothingstoreapp.fragment.PasswordChangeFragment;
-import com.example.clothingstoreapp.fragment.RegisterFragment;
-import com.example.clothingstoreapp.fragment.VerificationFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfAccountInfoActivity.AccountInfoFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfAccountInfoActivity.PasswordChangeFragment;
 
 public class AccountInfoActivity extends AppCompatActivity {
     Toolbar toolbar;

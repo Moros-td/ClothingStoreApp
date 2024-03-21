@@ -13,8 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.clothingstoreapp.R;
-import com.example.clothingstoreapp.fragment.AddAddressFragment;
-import com.example.clothingstoreapp.fragment.CartExistFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfAddAddressFragmentActivity.AddAddressFragment;
 
 public class AddAddressActivity extends AppCompatActivity {
     Toolbar toolbarAddress;
