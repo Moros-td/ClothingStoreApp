@@ -1,35 +1,24 @@
 package com.example.clothingstoreapp.api;
 
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-
-import com.example.clothingstoreapp.entity.CustomerEntity;
+import com.example.clothingstoreapp.entity.CategoryEntity;
 import com.example.clothingstoreapp.entity.ProductEntity;
-import com.example.clothingstoreapp.interceptor.SessionManager;
 import com.example.clothingstoreapp.response.LoginResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 public interface ApiService {
 //    String jwt = null;
@@ -73,4 +62,6 @@ public interface ApiService {
 
     @GET("/Product/getAllProducts")
     Call<List<ProductEntity>> getAllProducts();
+    @GET("/Category/getAllCategories")
+    Call<List<CategoryEntity>> getAllCategories();
 }
