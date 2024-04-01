@@ -141,13 +141,25 @@ public class AccountFragment extends Fragment {
                     }
                     LoginResponse loginResponse = response.body();
                     if(loginResponse != null){
-                        if(loginResponse.getErr() != null)
-                            Toast.makeText(getContext(), loginResponse.getErr(), Toast.LENGTH_LONG).show();
+                        if(loginResponse.getErr() != null){
+                            if(loginResponse.getErr().equals("Unauthenticated")){
+                                sessionManager = new SessionManager(getContext());
+                                sessionManager.logout();
+                                sessionManager.deleteCustom("email");
+                                showMenuBeforeLogin();
+
+                                BaseActivity baseActivity = (BaseActivity) getContext();
+                                baseActivity.initReplaceCurrentFragment(BaseActivity.FRAGMENT_ACCOUNT);
+                            }
+                            else{
+                                Toast.makeText(getContext(), loginResponse.getErr(), Toast.LENGTH_LONG).show();
+                            }
+                        }
                         else {
                             sessionManager = new SessionManager(getContext());
                             sessionManager.logout();
                             sessionManager.deleteCustom("email");
-                            showMenuAfterLogin();
+                            showMenuBeforeLogin();
 
                             BaseActivity baseActivity = (BaseActivity) getContext();
                             baseActivity.initReplaceCurrentFragment(BaseActivity.FRAGMENT_ACCOUNT);
