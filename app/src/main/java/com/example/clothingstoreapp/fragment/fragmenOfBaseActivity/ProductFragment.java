@@ -147,16 +147,15 @@ public class ProductFragment extends Fragment {
         ApiService.apiService.getAllCategories().enqueue(new Callback<List<CategoryEntity>>() {
             @Override
             public void onResponse(Call<List<CategoryEntity>> call, Response<List<CategoryEntity>> response) {
+                dialog.dismiss();
                 if (response.isSuccessful()) {
-                    if (dialog != null && dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
                     listCategories = response.body();
                     // Cập nhật dữ liệu cho tab Nữ
                     updateDataForFemaleTab();
                 } else {
                     BaseActivity.openErrorDialog(getContext(), "Không thể lấy danh sách danh mục từ API.");
                 }
+
             }
 
             @Override
