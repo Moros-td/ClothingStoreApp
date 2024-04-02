@@ -59,6 +59,17 @@ public interface ApiService {
     Call<LoginResponse> loginOut(@Header ("Authorization") String token,
                                  @Field("email") String email);
 
+    @FormUrlEncoded
+    @POST("/Auth/Register")
+    Call<LoginResponse> register(@Field("email") String email, @Field("fullname") String fullName,
+                                 @Field("password") String password, @Field("retype_password") String retype_password,
+                                 @Field("phone") String phone);
+    @FormUrlEncoded
+    @POST("/Auth/Verify")
+    Call<LoginResponse> verify(@Field("verifyCode") String verifyCode, @Field("token") String token);
+    @FormUrlEncoded
+    @POST("/Auth/ForgotPassword")
+    Call<LoginResponse> forgotPassword(@Field("email") String email);
     @GET("/Product/getAllProducts")
     Call<List<ProductEntity>> getAllProducts();
     @GET("/Category/getAllCategories")

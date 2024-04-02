@@ -112,6 +112,14 @@ public class AuthenticationActivity extends AppCompatActivity {
         });
     }
 
+    public void popVerifyFragment(){
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+            getSupportFragmentManager().popBackStack();
+            currentFragment = FRAGMENT_REGISTER;
+            textViewTitle.setText("Đăng kí");
+        }
+    }
+
     public void openFragment(int fragment){
         if(currentFragment != fragment){
             switch (fragment){
