@@ -1,66 +1,121 @@
 package com.example.clothingstoreapp.fragment.fragmentOfAuthenticationActivity;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.activity.AuthenticationActivity;
+import com.example.clothingstoreapp.activity.BaseActivity;
+import com.example.clothingstoreapp.api.ApiService;
+import com.example.clothingstoreapp.interceptor.SessionManager;
+import com.example.clothingstoreapp.response.LoginResponse;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link VerificationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class VerificationFragment extends Fragment {
+    Button verifyBtn;
+    AuthenticationActivity authenticationActivity;
+    EditText otpEditText;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    SessionManager sessionManager;
+    Dialog dialog;
     public VerificationFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment VerificationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static VerificationFragment newInstance(String param1, String param2) {
-        VerificationFragment fragment = new VerificationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_verification, container, false);
+        View mView = inflater.inflate(R.layout.fragment_verification, container, false);
+
+        verifyBtn = mView.findViewById(R.id.verifyBtn);
+        otpEditText = mView.findViewById(R.id.otpEditText);
+        authenticationActivity = (AuthenticationActivity) getContext();
+        sessionManager = new SessionManager(authenticationActivity);
+        //otpEditText.setText(sessionManager.getCustom("verify_token"));
+        verifyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String verifyCode = otpEditText.getText().toString();
+                if(verifyCode.isEmpty()){
+                    otpEditText.setError("Không được để trống");
+                    return;
+                }
+
+                String token = sessionManager.getCustom("verify_token");
+                dialog = BaseActivity.openLoadingDialog(authenticationActivity);
+                ApiService.apiService.verify(verifyCode, token)
+                                .enqueue(new Callback<LoginResponse>() {
+                                    @Override
+                                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                                        if (dialog != null && dialog.isShowing()) {
+                                            dialog.dismiss();
+                                        }
+                                        LoginResponse loginResponse = response.body();
+                                        if(loginResponse != null){
+                                            if(loginResponse.getErr() != null) {
+                                                if(loginResponse.getErr().equals("Token expired") ||
+                                                        loginResponse.getErr().equals("Incorrectly more than 3 times")){
+                                                    sessionManager.deleteCustom("verify_token");
+
+                                                    BaseActivity.openErrorDialog(authenticationActivity, "Đã sai mã xác nhận quá 3 lần, vui lòng đăng kí lại");
+                                                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            authenticationActivity.popVerifyFragment();
+                                                        }
+                                                    }, 3000); // 3000 milliseconds = 3 second
+                                                }
+                                                else {
+                                                    if(loginResponse.getErr().equals("Wrong verify code")) {
+                                                        otpEditText.setText("");
+                                                        sessionManager.saveCustom("verify_token", loginResponse.getToken());
+                                                        BaseActivity.openErrorDialog(getContext(), "Sai mã xác nhận");
+                                                    }
+                                                    else{
+                                                        BaseActivity.openErrorDialog(getContext(), "Lỗi");
+                                                    }
+                                                }
+                                            }
+                                            else if (loginResponse.getMessage() != null){
+                                                if(loginResponse.getMessage().equals("done")){
+                                                    BaseActivity.openSuccessDialog(authenticationActivity, "Đăng kí thành công, vui lòng đăng nhập");
+
+                                                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            authenticationActivity.finish();
+                                                        }
+                                                    }, 3000); // 3000 milliseconds = 3 second
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<LoginResponse> call, Throwable throwable) {
+                                        if (dialog != null && dialog.isShowing()) {
+                                            dialog.dismiss();
+                                        }
+                                        BaseActivity.openErrorDialog(getContext(), "Không thể truy cập api");
+                                    }
+                                });
+            }
+        });
+
+        return mView;
     }
 }

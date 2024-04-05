@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingBottom="10dp"
-                android:text="Sai email hoặc mật khẩu"
+                android:text="Vui lòng nhập đủ thông tin"
                 android:textColor="@color/red"
                 android:textSize="18dp"
                 android:visibility="gone" />
@@ -37,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/white_radius_15"
                 android:hint="Email"
+                android:inputType="textEmailAddress"
                 android:padding="10dp"
                 android:textSize="20dp" />
 
@@ -47,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/white_radius_15"
                 android:hint="Mật khẩu"
+                android:inputType="textPassword"
                 android:padding="10dp"
                 android:textSize="20dp" />
 
@@ -57,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/white_radius_15"
                 android:hint="Nhập lại mật khẩu"
+                android:inputType="textPassword"
                 android:padding="10dp"
                 android:textSize="20dp" />
 
@@ -67,6 +70,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/white_radius_15"
                 android:hint="Số điện thoại"
+                android:inputType="phone"
                 android:padding="10dp"
                 android:textSize="20dp" />
 

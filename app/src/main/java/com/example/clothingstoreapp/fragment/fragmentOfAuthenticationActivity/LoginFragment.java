@@ -95,11 +95,15 @@ public class LoginFragment extends Fragment {
         return mview;
     }
 
+    private void resetEditText(){
+        emailEditText.setText("");
+        passwordEditText.setText("");
+    }
     private void callApiLogin() {
         CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setEmail(emailEditText.getText().toString().trim());
         customerEntity.setPassword(passwordEditText.getText().toString().trim());
-
+        resetEditText();
         if(isEmailValid(customerEntity.getEmail())){
             ApiService.apiService.logIn(customerEntity.getEmail(),
                             customerEntity.getPassword())
