@@ -1,12 +1,19 @@
 package com.example.clothingstoreapp.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class CartItemEnity implements Serializable {
+    @SerializedName("cart_code")
     private String codeCart;
+    @SerializedName("product")
     private ProductEntity product;
+    @SerializedName("quantity")
     private int quantity;
+    @SerializedName("size")
     private String size;
+    @SerializedName("total_price")
     private Double totalPrice;
 
     public String getCodeCart() {

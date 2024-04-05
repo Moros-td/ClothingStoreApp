@@ -1,11 +1,15 @@
 package com.example.clothingstoreapp.activity;
 
+import static java.security.AccessController.getContext;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -14,28 +18,67 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.api.ApiService;
+import com.example.clothingstoreapp.fragment.fragmentOfCartBaseActivity.CartEmptyFragment;
 import com.example.clothingstoreapp.fragment.fragmentOfCartBaseActivity.CartExistFragment;
+import com.example.clothingstoreapp.interceptor.SessionManager;
+import com.example.clothingstoreapp.response.CheckItemResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CartBaseActivity extends AppCompatActivity {
 
     Toolbar toolbarCart;
     ImageView backButtonCart;
+    SessionManager sessionManager;
+    Dialog dialog;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+        dialog = BaseActivity.openLoadingDialog(CartBaseActivity.this);
 
         initView();
         setEvent();
 
+        sessionManager = new SessionManager(CartBaseActivity.this);
         //test cart empty or exist
-        Fragment fragment;
-//        fragment = new CartEmptyFragment();
-//        replaceFragment(fragment);
-        fragment = new CartExistFragment();
-        replaceFragment(fragment);
+        ApiService.apiService.checkItem(sessionManager.getJwt(), sessionManager.getCustom("email")).enqueue(new Callback<CheckItemResponse>() {
+            @Override
+            public void onResponse(Call<CheckItemResponse> call, Response<CheckItemResponse> response) {
+                dialog.dismiss();
+                if (response.isSuccessful()) {
+                    CheckItemResponse temp = response.body();
+                    int count = temp.getNumberOfItem();
+                    if(count != 0){
+                        Fragment fragment = new CartExistFragment();
+                        replaceFragment(fragment);
+                    }
+                    else{
+                        Fragment fragment = new CartEmptyFragment();
+                        replaceFragment(fragment);
+                    }
+                } else {
+                    Intent authenticationActivity = new Intent(CartBaseActivity.this, AuthenticationActivity.class);
+                    startActivity(authenticationActivity);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CheckItemResponse> call, Throwable throwable) {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                BaseActivity.openErrorDialog(CartBaseActivity.this, "Không thể truy cập API, vui lòng thử lại sau!");
+            }
+
+        });
+
+
     }
 
 
@@ -90,6 +133,7 @@ public class CartBaseActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.containerCart, fragment);
         fragmentTransaction.commit();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 

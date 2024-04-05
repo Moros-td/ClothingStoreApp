@@ -30,8 +30,11 @@ import com.example.clothingstoreapp.activity.CartBaseActivity;
 import com.example.clothingstoreapp.adapter.ProductAdapter;
 import com.example.clothingstoreapp.api.ApiService;
 import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
+import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.ProductEntity;
 import com.example.clothingstoreapp.interceptor.SessionManager;
+import com.example.clothingstoreapp.response.AddProductResponse;
+import com.example.clothingstoreapp.response.CartCodeResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,9 +90,9 @@ public class SearchFragment extends Fragment {
                     public void onClickAddProduct(ProductEntity product) {
                         // sự kiện nút add sản phẩm
                         String token = sessionManager.getJwt();
-                        if(token != null)
+                        if (token != null)
                             openConfirmSizeDialog(product);
-                        else{
+                        else {
                             Intent authenticationActivity = new Intent(getContext(), AuthenticationActivity.class);
 
                             startActivity(authenticationActivity);
@@ -157,85 +160,131 @@ public class SearchFragment extends Fragment {
         TextView sizeXXL = dialog.findViewById(R.id.size_XXL);
 
         Map<String, Integer> sizes = product.getSizes();
-        if(sizes.get("S") != null){
-            if(sizes.get("S") > 1){
+        if (sizes.get("S") != null) {
+            if (sizes.get("S") > 1) {
                 sizeS.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
-                        BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công");
+                        callApiGetCartCode(product, "S");
                     }
                 });
-            }
-            else{
-                sizeS.setBackgroundColor(getResources().getColor( R.color.disabled_color, null));
+            } else {
+                sizeS.setBackgroundColor(getResources().getColor(R.color.disabled_color, null));
                 //sizeS.setBackgroundColor(ContextCompat.getColor(baseActivity, R.color.disabled_color));
             }
         }
 
-        if(sizes.get("M") != null){
-            if(sizes.get("M") > 1){
+        if (sizes.get("M") != null) {
+            if (sizes.get("M") > 1) {
                 sizeM.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
-                        //openSuccessDialog();
-                        BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công");
+                        callApiGetCartCode(product, "M");
                     }
                 });
-            }
-            else{
-                sizeM.setBackgroundColor(getResources().getColor( R.color.disabled_color, null));
+            } else {
+                sizeM.setBackgroundColor(getResources().getColor(R.color.disabled_color, null));
             }
         }
 
-        if(sizes.get("L") != null){
-            if(sizes.get("L") > 1){
+        if (sizes.get("L") != null) {
+            if (sizes.get("L") > 1) {
                 sizeL.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
-                        BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công");
+                        callApiGetCartCode(product, "L");
                     }
                 });
-            }
-            else{
-                sizeL.setBackgroundColor(getResources().getColor( R.color.disabled_color, null));
+            } else {
+                sizeL.setBackgroundColor(getResources().getColor(R.color.disabled_color, null));
             }
         }
 
-        if(sizes.get("XL") != null){
-            if(sizes.get("XL") > 1){
+        if (sizes.get("XL") != null) {
+            if (sizes.get("XL") > 1) {
                 sizeXL.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
-                        BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công");
+                        callApiGetCartCode(product, "XL");
                     }
                 });
-            }
-            else{
-                sizeXL.setBackgroundColor(getResources().getColor( R.color.disabled_color, null));
+            } else {
+                sizeXL.setBackgroundColor(getResources().getColor(R.color.disabled_color, null));
             }
         }
 
-        if(sizes.get("XXL") != null){
-            if(sizes.get("XXL") > 1){
+        if (sizes.get("XXL") != null) {
+            if (sizes.get("XXL") > 1) {
                 sizeXXL.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
-                        BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công");
+                        callApiGetCartCode(product, "XXL");
                     }
                 });
-            }
-            else{
-                sizeXXL.setBackgroundColor(getResources().getColor( R.color.disabled_color, null));
+            } else {
+                sizeXXL.setBackgroundColor(getResources().getColor(R.color.disabled_color, null));
             }
         }
 
         dialog.show();
     }
+
+    private void callApiGetCartCode(ProductEntity product, String size) {
+        String email = sessionManager.getCustom("email");
+        ApiService.apiService.findCartCode(sessionManager.getJwt(), email).enqueue(new Callback<CartCodeResponse>() {
+            @Override
+            public void onResponse(Call<CartCodeResponse> call, Response<CartCodeResponse> response) {
+                if (response.isSuccessful()) {
+                    CartCodeResponse temp = response.body();
+                    String cartCode = temp.getCartCode();
+                    callApiPushProduct(product, size, cartCode);
+                } else {
+                    BaseActivity.openErrorDialog(getContext(), "Không thể truy cập API.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CartCodeResponse> call, Throwable throwable) {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                BaseActivity.openErrorDialog(getContext(), "Không thể truy cập API, vui lòng thử lại sau!");
+
+            }
+        });
+    }
+
+    private void callApiPushProduct(ProductEntity product, String size, String cartCode) {
+        Dialog dg = BaseActivity.openLoadingDialog(getContext());
+        ApiService.apiService.AddProduct(sessionManager.getJwt(), cartCode,
+                product.getProductCode(), 1, size, product.getProductPrice()).enqueue(new Callback<AddProductResponse>() {
+            @Override
+            public void onResponse(Call<AddProductResponse> call, Response<AddProductResponse> response) {
+                dg.dismiss();
+                if (response.isSuccessful()) {
+                    AddProductResponse result = response.body();
+                    if ("done".equals(result.getSuccess()))
+                        BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công!");
+                } else {
+                    BaseActivity.openErrorDialog(getContext(), "Xảy ra lỗi!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddProductResponse> call, Throwable throwable) {
+                if (dg != null && dg.isShowing()) {
+                    dg.dismiss();
+                }
+                BaseActivity.openErrorDialog(getContext(), "Hiện không thể truy cập API, vui lòng thử lại sau!");
+            }
+        });
+    }
+
 
 //    public void moveData(ProductEntity product, String size){
 //        Intent intent = new Intent(getActivity(), CartBaseActivity.class);

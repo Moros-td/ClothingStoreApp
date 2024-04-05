@@ -22,13 +22,22 @@ import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.activity.BaseActivity;
 import com.example.clothingstoreapp.activity.CartBaseActivity;
 import com.example.clothingstoreapp.adapter.CartAdapter;
+import com.example.clothingstoreapp.api.ApiService;
 import com.example.clothingstoreapp.custom_interface.IClickItemCartListener;
 import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
 import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.ProductEntity;
+import com.example.clothingstoreapp.interceptor.SessionManager;
+import com.example.clothingstoreapp.response.CartCodeResponse;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CartExistFragment extends Fragment {
 
@@ -38,6 +47,10 @@ public class CartExistFragment extends Fragment {
     private Button btnOrder;
     private List<CartItemEnity> list;
     private IClickItemProductListener iClickItemProductListener;
+    private Dialog dialog;
+    private TextView totalPriceTextView, tempPriceTextView;
+    private SessionManager sessionManager;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,59 +59,75 @@ public class CartExistFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_cart_exist, container, false);
         cartBaseActivity = (CartBaseActivity) getActivity();
         recyclerView = mView.findViewById(R.id.rcv_product_cart);
+        sessionManager = new SessionManager(cartBaseActivity);
 
         //set layout manager cho rcv
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(cartBaseActivity);
         recyclerView.setLayoutManager(linearLayoutManager);
 
         // Ánh xạ TextView của footer
-        TextView totalPriceTextView = mView.findViewById(R.id.cart_totalPrice);
-        TextView tempPriceTextView = mView.findViewById(R.id.cart_tempPrice);
+        totalPriceTextView = mView.findViewById(R.id.cart_totalPrice);
+        tempPriceTextView = mView.findViewById(R.id.cart_tempPrice);
 
         // Set adapter cho recyclerView và truyền các TextView của footer vào
-        list = getListProductCart();
-        CartAdapter cartAdapter = new CartAdapter(list, totalPriceTextView, tempPriceTextView, new IClickItemCartListener() {
-            @Override
-            public void onClickRemove(CartItemEnity cartItemEnity) {
-                openConfirmDialog(cartItemEnity.getProduct());
-            }
+        list = new ArrayList<>();
+        dialog = BaseActivity.openLoadingDialog(getContext());
 
-            @Override
-            public void onClickSubtract(CartItemEnity cartItem) {
-            }
+        callApiGetAllCartItems();
 
-            @Override
-            public void onClickAdd(CartItemEnity cartItem) {
-            }
-        });
 
-        //set adapter
-        recyclerView.setAdapter(cartAdapter);
-
-        // Gọi phương thức để cập nhật footer total
-        footerTotal();
-        //chuyển đến trang địa chỉ
-        btnOrder = mView.findViewById(R.id.btn_order);
-        btnOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment fragment = new CartAddressFragment();
-                FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.containerCart, fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        });
         return mView;
     }
 
-    private List<CartItemEnity> getListProductCart() {
-        List<CartItemEnity> list = new ArrayList<>();
-        ProductEntity product = new ProductEntity("SP123", "ÁO THUN TRƠN CỔ ĐỨC KHUY NGỌC TRAI ", 5, 500.00);
-        list.add(new CartItemEnity("0001", product, 2, "XL", 2 * product.getProductPrice()));
-        list.add(new CartItemEnity("0002", product, 4, "L", 4 * product.getProductPrice()));
-        return list;
+
+
+    private void callApiGetAllCartItems() {
+        ApiService.apiService.getAllCartItems(sessionManager.getJwt(),sessionManager.getCustom("email")).enqueue(new Callback<List<CartItemEnity>>() {
+            @Override
+            public void onResponse(Call<List<CartItemEnity>> call, Response<List<CartItemEnity>> response) {
+
+                list = response.body();
+                CartAdapter cartAdapter = new CartAdapter(list, totalPriceTextView, tempPriceTextView, new IClickItemCartListener() {
+                    @Override
+                    public void onClickRemove(CartItemEnity cartItemEnity) {
+                        openConfirmDialog(cartItemEnity.getProduct());
+                    }
+
+                    @Override
+                    public void onClickSubtract(CartItemEnity cartItem) {
+                    }
+
+                    @Override
+                    public void onClickAdd(CartItemEnity cartItem) {
+                    }
+                });
+                dialog.dismiss();
+                recyclerView.setAdapter(cartAdapter);
+                footerTotal();
+                btnOrder = mView.findViewById(R.id.btn_order);
+                btnOrder.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Fragment fragment = new CartAddressFragment();
+                        FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.containerCart, fragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<List<CartItemEnity>> call, Throwable throwable) {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                BaseActivity.openErrorDialog(getContext(), "Vui lòng thử lại sau!");
+            }
+        });
     }
+
+
 
     private void footerTotal() {
         CartAdapter cartAdapter = (CartAdapter) recyclerView.getAdapter();
@@ -151,4 +180,5 @@ public class CartExistFragment extends Fragment {
 
         dialog.show();
     }
+
 }

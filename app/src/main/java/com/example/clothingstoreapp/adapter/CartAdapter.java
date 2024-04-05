@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.custom_interface.IClickItemCartListener;
 import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
@@ -52,10 +53,50 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         if (cartItemEntity == null) {
             return;
         } else {
+            holder.textViewProductName.setText(cartItemEntity.getProduct().getProductName());
             holder.textViewSize.setText(cartItemEntity.getSize());
             holder.textViewQuantity.setText(String.valueOf(cartItemEntity.getQuantity()));
             holder.textViewProductPrice.setText(String.valueOf(cartItemEntity.getTotalPrice()));
+//set ảnh
+            String path = cartItemEntity.getProduct().getImages().get(0);
+            String pathImage = "";
+            if (path != null && path.length() > 1) {
+                String newPath = path.substring(1);
+                pathImage = "http://10.0.2.2:8096"+newPath;
+            }
+            Glide.with(holder.imageViewProduct).load(pathImage).into(holder.imageViewProduct);
 
+            // set màu
+            if(cartItemEntity.getProduct().getProductColor().equals("red")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_red);
+            }
+            else if(cartItemEntity.getProduct().getProductColor().equals("pink")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_pink);
+            }
+            else if(cartItemEntity.getProduct().getProductColor().equals("yellow")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_yellow);
+            }
+            else if(cartItemEntity.getProduct().getProductColor().equals("green")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.circle_backgound_green);
+            }
+            else if(cartItemEntity.getProduct().getProductColor().equals("blue")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_blue);
+            }
+            else if(cartItemEntity.getProduct().getProductColor().equals("beige")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.cirlce_background_beige);
+            }
+            else if(cartItemEntity.getProduct().getProductColor().equals("white")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_white);
+            }
+            else if(cartItemEntity.getProduct().getProductColor().equals("black")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.circle_backgound_black);
+            }
+            else if(cartItemEntity.getProduct().getProductColor().equals("brown")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_brown);
+            }
+            else if(cartItemEntity.getProduct().getProductColor().equals("gray")){
+                holder.viewProductColor.setBackgroundResource(R.drawable.circle_background_gray);
+            }
             // sự kiện các nút
             if(iClickItemCartListener != null){
                 holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +124,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 holder.imageViewAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        iClickItemCartListener.onClickSubtract(cartItemEntity);
+                        iClickItemCartListener.onClickAdd(cartItemEntity);
                         int newQuantity = cartItemEntity.getQuantity() + 1;
 
                         if (newQuantity <= cartItemEntity.getProduct().getProductQuantity()) {
@@ -114,8 +155,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public class CartViewHolder extends RecyclerView.ViewHolder {
 
         private TextView
-                textViewSize, textViewQuantity, textViewProductPrice;
-        private ImageView imageViewDelete, imageViewSub, imageViewAdd;
+                textViewSize, textViewQuantity, textViewProductPrice, textViewProductName;
+        private ImageView imageViewDelete, imageViewSub, imageViewAdd, imageViewProduct;
+        private View viewProductColor;
 
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -125,6 +167,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             imageViewDelete = itemView.findViewById(R.id.imageView_delete_product);
             imageViewSub = itemView.findViewById(R.id.subtract_quantity);
             imageViewAdd = itemView.findViewById(R.id.add_quantity);
+            imageViewProduct = itemView.findViewById(R.id.imageView_product);
+            viewProductColor = itemView.findViewById(R.id.view_product_color);
+            textViewProductName = itemView.findViewById(R.id.textView_product_name);
         }
     }
     public void footerTotal() {
