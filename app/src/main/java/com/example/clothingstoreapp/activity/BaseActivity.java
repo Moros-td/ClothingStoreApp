@@ -1,6 +1,8 @@
 package com.example.clothingstoreapp.activity;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -8,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -27,14 +31,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.api.ApiService;
 import com.example.clothingstoreapp.fragment.fragmenOfBaseActivity.AccountFragment;
 import com.example.clothingstoreapp.fragment.fragmenOfBaseActivity.HelpFragment;
 import com.example.clothingstoreapp.fragment.fragmenOfBaseActivity.HomeFragment;
 import com.example.clothingstoreapp.fragment.fragmenOfBaseActivity.ProductFragment;
 import com.example.clothingstoreapp.fragment.fragmenOfBaseActivity.SearchFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfCartBaseActivity.CartEmptyFragment;
+import com.example.clothingstoreapp.fragment.fragmentOfCartBaseActivity.CartExistFragment;
+import com.example.clothingstoreapp.interceptor.SessionManager;
+import com.example.clothingstoreapp.response.CheckItemResponse;
+import com.example.clothingstoreapp.response.ErrResponse;
 import com.google.android.material.badge.BadgeDrawable;;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.gson.Gson;
+
+import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BaseActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
@@ -45,6 +62,8 @@ public class BaseActivity extends AppCompatActivity {
     TextView textCartItemCount;
     int mCartItemCount = 10;
 
+    SessionManager sessionManager;
+
     public static final int FRAGMENT_HOME = 1;
     public static final int FRAGMENT_PRODUCT = 2;
     public static final int FRAGMENT_SEARCH = 3;
@@ -53,7 +72,9 @@ public class BaseActivity extends AppCompatActivity {
 
     public int currentFragment = FRAGMENT_HOME;
 
+    ActivityResultLauncher<Intent> activityLauncher;
 
+    Dialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +112,7 @@ public class BaseActivity extends AppCompatActivity {
         badgeDrawableAccount.setVisible(true);
         badgeDrawableAccount.setNumber(1000);
 
+        sessionManager = new SessionManager(BaseActivity.this);
     }
 
 
@@ -171,20 +193,16 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
 
-        //set sự kiện back
-//        final Animation animAlpha = AnimationUtils.loadAnimation(this, R.anim.anim_alpha);
-//        backButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Xử lý sự kiện khi nhấn nút back
-//                v.startAnimation(animAlpha);
-//
-//                callback.handleOnBackPressed();
-//
-//
-//            }
-//        });
+         activityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        //login thành công
+                        Intent cartActivity = new Intent(BaseActivity.this, CartBaseActivity.class);
 
+                        startActivity(cartActivity);
+                    }
+                });
     }
 
     @Override
@@ -201,15 +219,28 @@ public class BaseActivity extends AppCompatActivity {
         if(actionView != null){
             // set số sản phẩm trong giỏ
             textCartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
-            setCartBadge(100);
+            if(sessionManager.isLoggedIn()){
+                dialog = openLoadingDialog(BaseActivity.this);
+                callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
+            }
+            else{
+                setCartBadge(0);
+            }
 
             // sự kiện click vào giỏ hàng
             actionView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent cartActivity = new Intent(BaseActivity.this, CartBaseActivity.class);
+                    if(sessionManager.isLoggedIn()){
+                        Intent cartActivity = new Intent(BaseActivity.this, CartBaseActivity.class);
 
-                    startActivity(cartActivity);
+                        startActivity(cartActivity);
+                    }
+                    // chưa login
+                    else{
+                        Intent intent = new Intent(BaseActivity.this, AuthenticationActivity.class);
+                        activityLauncher.launch(intent);
+                    }
                 }
             });
         }
@@ -217,15 +248,60 @@ public class BaseActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void setCartBadge(int num) {
+    public void callApiSetCartCountItem(String token, String email) {
+        ApiService.apiService.checkItem(token, email).enqueue(new Callback<CheckItemResponse>() {
+            @Override
+            public void onResponse(Call<CheckItemResponse> call, Response<CheckItemResponse> response) {
+                dialog.dismiss();
+                if (response.isSuccessful()) {
+                    CheckItemResponse temp = response.body();
+                    int count = temp.getNumberOfItem();
+                    setCartBadge(count);
+                } else {
+                    Gson gson = new Gson();
 
+                    if(response.errorBody() != null) {
+                        try {
+                            ErrResponse errResponse = gson.fromJson(response.errorBody().string(), ErrResponse.class);
+                            BaseActivity.openErrorDialog(BaseActivity.this, errResponse.getErr());
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else{
+                        BaseActivity.openErrorDialog(BaseActivity.this, "Lỗi");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CheckItemResponse> call, Throwable throwable) {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                BaseActivity.openErrorDialog(BaseActivity.this, "Không thể truy cập API, vui lòng thử lại sau!");
+            }
+
+        });
+    }
+
+    private void setCartBadge(int num) {
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) textCartItemCount.getLayoutParams();
         if (textCartItemCount != null) {
             if (num < 100) {
+                params.width = dpToPx(20);
                 textCartItemCount.setText(String.valueOf(num));
+                params.setMarginEnd(-20);
             } else {
+                params.width = dpToPx(30);
+                params.setMarginEnd(-40);
                 textCartItemCount.setText("99+");
             }
         }
+        textCartItemCount.setLayoutParams(params);
+    }
+    private int dpToPx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
 

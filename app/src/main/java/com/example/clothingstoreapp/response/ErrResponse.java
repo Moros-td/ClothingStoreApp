@@ -1,6 +1,5 @@
 package com.example.clothingstoreapp.response;
 
-import okhttp3.ResponseBody;
 
 public class ErrResponse {
     private String err;
@@ -12,6 +11,5 @@ public class ErrResponse {
     public void setErr(String err) {
         this.err = err;
     }
-
 
 }

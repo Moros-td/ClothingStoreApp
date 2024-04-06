@@ -23,7 +23,13 @@ import com.example.clothingstoreapp.fragment.fragmentOfCartBaseActivity.CartEmpt
 import com.example.clothingstoreapp.fragment.fragmentOfCartBaseActivity.CartExistFragment;
 import com.example.clothingstoreapp.interceptor.SessionManager;
 import com.example.clothingstoreapp.response.CheckItemResponse;
+import com.example.clothingstoreapp.response.ErrResponse;
+import com.example.clothingstoreapp.response.LoginResponse;
+import com.google.gson.Gson;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,8 +69,19 @@ public class CartBaseActivity extends AppCompatActivity {
                         replaceFragment(fragment);
                     }
                 } else {
-                    Intent authenticationActivity = new Intent(CartBaseActivity.this, AuthenticationActivity.class);
-                    startActivity(authenticationActivity);
+                    Gson gson = new Gson();
+
+                    if(response.errorBody() != null) {
+                        try {
+                            ErrResponse errResponse = gson.fromJson(response.errorBody().string(), ErrResponse.class);
+                            BaseActivity.openErrorDialog(CartBaseActivity.this, errResponse.getErr());
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else{
+                        BaseActivity.openErrorDialog(CartBaseActivity.this, "Lỗi");
+                    }
                 }
             }
 

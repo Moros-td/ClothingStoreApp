@@ -123,7 +123,9 @@ public class LoginFragment extends Fragment {
                                     sessionManager.saveJwt(loginResponse.getToken());
                                     sessionManager.saveCustom("email", customerEntity.getEmail());
                                     //Toast.makeText(getContext(), loginResponse.getToken(), Toast.LENGTH_LONG).show();
-                                    authenticationActivity.finish();
+
+                                    // finish và trả về mã ok
+                                    authenticationActivity.returnResultOk();
                                 }
                             }
                             else {

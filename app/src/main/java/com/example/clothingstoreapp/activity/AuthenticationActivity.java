@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -166,5 +167,10 @@ public class AuthenticationActivity extends AppCompatActivity {
         String fragmentTag = getFragmentName(fragment);
         fragmentTransaction.addToBackStack(fragmentTag);
         fragmentTransaction.commit();
+    }
+
+    public void returnResultOk(){
+        setResult(Activity.RESULT_OK);
+        finish();
     }
 }
