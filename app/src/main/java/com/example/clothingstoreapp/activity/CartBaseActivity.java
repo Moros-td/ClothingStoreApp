@@ -123,7 +123,7 @@ public class CartBaseActivity extends AppCompatActivity {
                     getSupportFragmentManager().popBackStack();
                 } else {
                     // Thực hiện hành động mặc định khi không có fragment trên back stack
-                    finish();
+                    returnResultCloseCart();
                 }
             }
         };
@@ -156,5 +156,10 @@ public class CartBaseActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public void returnResultCloseCart(){
+        setResult(ResultCodeActivity.CLOSE_CART);
+        finish();
     }
 }

@@ -149,6 +149,7 @@ public class AccountFragment extends Fragment {
                                 showMenuBeforeLogin();
 
                                 BaseActivity baseActivity = (BaseActivity) getContext();
+                                baseActivity.setCartBadge(0);
                                 baseActivity.initReplaceCurrentFragment(BaseActivity.FRAGMENT_ACCOUNT);
                             }
                             else{
@@ -162,6 +163,7 @@ public class AccountFragment extends Fragment {
                             showMenuBeforeLogin();
 
                             BaseActivity baseActivity = (BaseActivity) getContext();
+                            baseActivity.setCartBadge(0);
                             baseActivity.initReplaceCurrentFragment(BaseActivity.FRAGMENT_ACCOUNT);
                         }
                     }

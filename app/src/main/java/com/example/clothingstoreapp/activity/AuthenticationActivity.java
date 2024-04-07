@@ -170,7 +170,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     public void returnResultOk(){
-        setResult(Activity.RESULT_OK);
+        setResult(ResultCodeActivity.LOGIN_SUCCESS);
         finish();
     }
 }

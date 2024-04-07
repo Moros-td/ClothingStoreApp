@@ -74,7 +74,6 @@ public class BaseActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> activityLauncher;
 
-//    Dialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,14 +192,21 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
 
+        // KHI Activity được gọi finish
          activityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
+                    if (result.getResultCode() == ResultCodeActivity.LOGIN_SUCCESS) {
                         //login thành công
                         Intent cartActivity = new Intent(BaseActivity.this, CartBaseActivity.class);
 
-                        startActivity(cartActivity);
+                        //startActivity(cartActivity);
+                        activityLauncher.launch(cartActivity);
+                    }
+                    else if(result.getResultCode() == ResultCodeActivity.CLOSE_CART){
+                        if(sessionManager.isLoggedIn()){
+                            callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
+                        }
                     }
                 });
     }
@@ -220,7 +226,6 @@ public class BaseActivity extends AppCompatActivity {
             // set số sản phẩm trong giỏ
             textCartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
             if(sessionManager.isLoggedIn()){
-//                dialog = openLoadingDialog(BaseActivity.this);
                 callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
             }
             else{
@@ -234,7 +239,7 @@ public class BaseActivity extends AppCompatActivity {
                     if(sessionManager.isLoggedIn()){
                         Intent cartActivity = new Intent(BaseActivity.this, CartBaseActivity.class);
 
-                        startActivity(cartActivity);
+                        activityLauncher.launch(cartActivity);
                     }
                     // chưa login
                     else{
@@ -249,12 +254,14 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void callApiSetCartCountItem(String token, String email) {
-    Dialog dialog;
+        Dialog dialog;
         dialog = openLoadingDialog(BaseActivity.this);
         ApiService.apiService.checkItem(token, email).enqueue(new Callback<CheckItemResponse>() {
             @Override
             public void onResponse(Call<CheckItemResponse> call, Response<CheckItemResponse> response) {
-                dialog.dismiss();
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
                 if (response.isSuccessful()) {
                     CheckItemResponse temp = response.body();
                     int count = temp.getNumberOfItem();
@@ -287,7 +294,7 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    private void setCartBadge(int num) {
+    public void setCartBadge(int num) {
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) textCartItemCount.getLayoutParams();
         if (textCartItemCount != null) {
             if (num < 100) {
@@ -301,6 +308,14 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
         textCartItemCount.setLayoutParams(params);
+    }
+
+    public int getCartBadge() {
+        if (textCartItemCount != null) {
+            int num = Integer.parseInt(textCartItemCount.getText().toString());
+            return num;
+        }
+        return 0;
     }
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);

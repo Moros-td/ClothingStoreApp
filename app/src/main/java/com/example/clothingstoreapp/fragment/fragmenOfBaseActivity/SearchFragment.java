@@ -262,8 +262,10 @@ public class SearchFragment extends Fragment {
                 dg.dismiss();
                 if (response.isSuccessful()) {
                     ProductResponse result = response.body();
-                    if ("done".equals(result.getSuccess()))
+                    if ("done".equals(result.getSuccess())){
+                        baseActivity.setCartBadge(baseActivity.getCartBadge() + 1);
                         BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công!");
+                    }
                 } else {
                     BaseActivity.openErrorDialog(getContext(), "Xảy ra lỗi!");
                 }
