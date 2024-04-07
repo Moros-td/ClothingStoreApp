@@ -29,6 +29,7 @@ import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.ProductEntity;
 import com.example.clothingstoreapp.interceptor.SessionManager;
 import com.example.clothingstoreapp.response.CartCodeResponse;
+import com.example.clothingstoreapp.response.ProductResponse;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -80,9 +81,8 @@ public class CartExistFragment extends Fragment {
     }
 
 
-
     private void callApiGetAllCartItems() {
-        ApiService.apiService.getAllCartItems(sessionManager.getJwt(),sessionManager.getCustom("email")).enqueue(new Callback<List<CartItemEnity>>() {
+        ApiService.apiService.getAllCartItems(sessionManager.getJwt(), sessionManager.getCustom("email")).enqueue(new Callback<List<CartItemEnity>>() {
             @Override
             public void onResponse(Call<List<CartItemEnity>> call, Response<List<CartItemEnity>> response) {
 
@@ -95,10 +95,63 @@ public class CartExistFragment extends Fragment {
 
                     @Override
                     public void onClickSubtract(CartItemEnity cartItem) {
+                        Dialog dg = BaseActivity.openLoadingDialog(getContext());
+                        ApiService.apiService.RemoveProduct(sessionManager.getJwt(), cartItem.getCodeCart(), cartItem.getProduct().getProductCode(), 1,
+                                cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<ProductResponse>() {
+                            @Override
+                            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
+                                if (response.isSuccessful()) {
+                                    ProductResponse result = response.body();
+                                    if ("done".equals(result.getSuccess())) {
+                                        dg.dismiss();
+//                                        BaseActivity bs = new BaseActivity();
+//                                        bs.callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
+
+                                    }
+                                } else {
+                                    BaseActivity.openErrorDialog(getContext(), "Xảy ra lỗi!");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ProductResponse> call, Throwable throwable) {
+                                if (dg != null && dg.isShowing()) {
+                                    dg.dismiss();
+                                }
+                                BaseActivity.openErrorDialog(getContext(), "Hiện không thể truy cập API, vui lòng thử lại sau!");
+
+                            }
+                        });
                     }
 
                     @Override
                     public void onClickAdd(CartItemEnity cartItem) {
+                        Dialog dg = BaseActivity.openLoadingDialog(getContext());
+                        ApiService.apiService.AddProduct(sessionManager.getJwt(), cartItem.getCodeCart(), cartItem.getProduct().getProductCode(), 1,
+                                cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<ProductResponse>() {
+                            @Override
+                            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
+                                if (response.isSuccessful()) {
+                                    ProductResponse result = response.body();
+                                    if ("done".equals(result.getSuccess())) {
+//                                        BaseActivity bs = new BaseActivity();
+//                                        bs.callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
+                                        dg.dismiss();
+                                    }
+                                } else {
+                                    BaseActivity.openErrorDialog(getContext(), "Xảy ra lỗi!");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ProductResponse> call, Throwable throwable) {
+                                if (dg != null && dg.isShowing()) {
+                                    dg.dismiss();
+                                }
+                                BaseActivity.openErrorDialog(getContext(), "Hiện không thể truy cập API, vui lòng thử lại sau!");
+
+                            }
+                        });
                     }
                 });
                 dialog.dismiss();
@@ -126,7 +179,6 @@ public class CartExistFragment extends Fragment {
             }
         });
     }
-
 
 
     private void footerTotal() {

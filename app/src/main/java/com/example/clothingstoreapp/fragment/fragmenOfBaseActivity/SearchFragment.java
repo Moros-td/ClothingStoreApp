@@ -7,33 +7,27 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.activity.AuthenticationActivity;
 import com.example.clothingstoreapp.activity.BaseActivity;
-import com.example.clothingstoreapp.activity.CartBaseActivity;
 import com.example.clothingstoreapp.adapter.ProductAdapter;
 import com.example.clothingstoreapp.api.ApiService;
 import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
-import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.ProductEntity;
 import com.example.clothingstoreapp.interceptor.SessionManager;
-import com.example.clothingstoreapp.response.AddProductResponse;
+import com.example.clothingstoreapp.response.ProductResponse;
 import com.example.clothingstoreapp.response.CartCodeResponse;
 
 import java.util.ArrayList;
@@ -262,12 +256,12 @@ public class SearchFragment extends Fragment {
     private void callApiPushProduct(ProductEntity product, String size, String cartCode) {
         Dialog dg = BaseActivity.openLoadingDialog(getContext());
         ApiService.apiService.AddProduct(sessionManager.getJwt(), cartCode,
-                product.getProductCode(), 1, size, product.getProductPrice()).enqueue(new Callback<AddProductResponse>() {
+                product.getProductCode(), 1, size, product.getProductPrice()).enqueue(new Callback<ProductResponse>() {
             @Override
-            public void onResponse(Call<AddProductResponse> call, Response<AddProductResponse> response) {
+            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
                 dg.dismiss();
                 if (response.isSuccessful()) {
-                    AddProductResponse result = response.body();
+                    ProductResponse result = response.body();
                     if ("done".equals(result.getSuccess()))
                         BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công!");
                 } else {
@@ -276,7 +270,7 @@ public class SearchFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<AddProductResponse> call, Throwable throwable) {
+            public void onFailure(Call<ProductResponse> call, Throwable throwable) {
                 if (dg != null && dg.isShowing()) {
                     dg.dismiss();
                 }

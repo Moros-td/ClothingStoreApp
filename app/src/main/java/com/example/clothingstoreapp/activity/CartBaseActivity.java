@@ -56,7 +56,7 @@ public class CartBaseActivity extends AppCompatActivity {
         ApiService.apiService.checkItem(sessionManager.getJwt(), sessionManager.getCustom("email")).enqueue(new Callback<CheckItemResponse>() {
             @Override
             public void onResponse(Call<CheckItemResponse> call, Response<CheckItemResponse> response) {
-                dialog.dismiss();
+
                 if (response.isSuccessful()) {
                     CheckItemResponse temp = response.body();
                     int count = temp.getNumberOfItem();
@@ -83,6 +83,7 @@ public class CartBaseActivity extends AppCompatActivity {
                         BaseActivity.openErrorDialog(CartBaseActivity.this, "Lỗi");
                     }
                 }
+                dialog.dismiss();
             }
 
             @Override

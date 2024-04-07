@@ -3,7 +3,7 @@ package com.example.clothingstoreapp.api;
 import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.CategoryEntity;
 import com.example.clothingstoreapp.entity.ProductEntity;
-import com.example.clothingstoreapp.response.AddProductResponse;
+import com.example.clothingstoreapp.response.ProductResponse;
 import com.example.clothingstoreapp.response.CartCodeResponse;
 import com.example.clothingstoreapp.response.CheckItemResponse;
 import com.example.clothingstoreapp.response.LoginResponse;
@@ -82,12 +82,12 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/Cart/AddProduct")
-    Call<AddProductResponse> AddProduct(@Header ("Authorization") String token,
-                                        @Field("cart_code")String cart_code,
-                                        @Field("product_code")String product_code,
-                                        @Field("quantity")int quantity,
-                                        @Field("size")String size,
-                                        @Field("total_price")Double total_price);
+    Call<ProductResponse> AddProduct(@Header ("Authorization") String token,
+                                     @Field("cart_code")String cart_code,
+                                     @Field("product_code")String product_code,
+                                     @Field("quantity")int quantity,
+                                     @Field("size")String size,
+                                     @Field("total_price")Double total_price);
 
     @FormUrlEncoded
     @POST("/Cart/LoadCartItem")
@@ -104,4 +104,12 @@ public interface ApiService {
     Call<CheckItemResponse> checkItem(@Header ("Authorization") String token,
                                       @Field("email")String email);
 
+    @FormUrlEncoded
+    @POST("/Cart/RemoveProduct")
+    Call<ProductResponse> RemoveProduct(@Header ("Authorization") String token,
+                                        @Field("cart_code")String cart_code,
+                                        @Field("product_code")String product_code,
+                                        @Field("quantity")int quantity,
+                                        @Field("size")String size,
+                                        @Field("total_price")Double total_price);
 }

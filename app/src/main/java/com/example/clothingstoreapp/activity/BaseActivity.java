@@ -74,7 +74,7 @@ public class BaseActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> activityLauncher;
 
-    Dialog dialog;
+//    Dialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -220,7 +220,7 @@ public class BaseActivity extends AppCompatActivity {
             // set số sản phẩm trong giỏ
             textCartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
             if(sessionManager.isLoggedIn()){
-                dialog = openLoadingDialog(BaseActivity.this);
+//                dialog = openLoadingDialog(BaseActivity.this);
                 callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
             }
             else{
@@ -249,6 +249,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void callApiSetCartCountItem(String token, String email) {
+    Dialog dialog;
+        dialog = openLoadingDialog(BaseActivity.this);
         ApiService.apiService.checkItem(token, email).enqueue(new Callback<CheckItemResponse>() {
             @Override
             public void onResponse(Call<CheckItemResponse> call, Response<CheckItemResponse> response) {
