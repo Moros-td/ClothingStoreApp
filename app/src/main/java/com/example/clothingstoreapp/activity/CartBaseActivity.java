@@ -162,4 +162,8 @@ public class CartBaseActivity extends AppCompatActivity {
         setResult(ResultCodeActivity.CLOSE_CART);
         finish();
     }
+    public void setBackButtonVisibility(boolean isVisible) {
+        ImageView backButtonCart = findViewById(R.id.backButtonCart);
+        backButtonCart.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
 }

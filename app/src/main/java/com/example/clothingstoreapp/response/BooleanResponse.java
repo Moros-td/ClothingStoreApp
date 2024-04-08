@@ -1,6 +1,6 @@
 package com.example.clothingstoreapp.response;
 
-public class ProductResponse {
+public class BooleanResponse {
     private String success;
     private String error;
 

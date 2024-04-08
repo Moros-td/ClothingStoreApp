@@ -52,8 +52,11 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
             holder.textViewName.setText(addressEntity.getName());
             holder.textViewPhone.setText(addressEntity.getPhone());
             holder.textViewAddress.setText(addressEntity.getAddress());
-//            RadioButton radioButton = holder.itemView.findViewById(R.id.radioButtonAddress);
-            holder.radioButton.setChecked(position == selectedPosition);
+            if(addressEntity.getIs_default() == 1){
+                selectedPosition = holder.getAdapterPosition();
+                holder.radioButton.setChecked(position == selectedPosition);
+            }
+//            holder.radioButton.setChecked(position == selectedPosition);
 
             // set listener on radio button
             holder.radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -61,10 +64,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     // check condition
                     if (b) {
-                        // When checked
-                        // update selected position
-                        selectedPosition = holder.getAdapterPosition();
-                        // Call listener
+//                        selectedPosition = holder.getAdapterPosition();
                         iClickItemAddress.onClickChoose(addressEntity);
                     }
                 }

@@ -1,12 +1,14 @@
 package com.example.clothingstoreapp.api;
 
+import com.example.clothingstoreapp.entity.AddressEntity;
 import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.CategoryEntity;
 import com.example.clothingstoreapp.entity.ProductEntity;
-import com.example.clothingstoreapp.response.ProductResponse;
+import com.example.clothingstoreapp.response.BooleanResponse;
 import com.example.clothingstoreapp.response.CartCodeResponse;
 import com.example.clothingstoreapp.response.CheckItemResponse;
 import com.example.clothingstoreapp.response.LoginResponse;
+import com.example.clothingstoreapp.response.OrderResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -60,7 +62,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/Auth/Logout")
-    Call<LoginResponse> loginOut(@Header ("Authorization") String token,
+    Call<LoginResponse> loginOut(@Header("Authorization") String token,
                                  @Field("email") String email);
 
     @FormUrlEncoded
@@ -68,12 +70,15 @@ public interface ApiService {
     Call<LoginResponse> register(@Field("email") String email, @Field("fullname") String fullName,
                                  @Field("password") String password, @Field("retype_password") String retype_password,
                                  @Field("phone") String phone);
+
     @FormUrlEncoded
     @POST("/Auth/Verify")
     Call<LoginResponse> verify(@Field("verifyCode") String verifyCode, @Field("token") String token);
+
     @FormUrlEncoded
     @POST("/Auth/ForgotPassword")
     Call<LoginResponse> forgotPassword(@Field("email") String email);
+
     @GET("/Product/getAllProducts")
     Call<List<ProductEntity>> getAllProducts();
 
@@ -82,34 +87,72 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/Cart/AddProduct")
-    Call<ProductResponse> AddProduct(@Header ("Authorization") String token,
-                                     @Field("cart_code")String cart_code,
-                                     @Field("product_code")String product_code,
-                                     @Field("quantity")int quantity,
-                                     @Field("size")String size,
-                                     @Field("total_price")Double total_price);
+    Call<BooleanResponse> AddProduct(@Header("Authorization") String token,
+                                     @Field("cart_code") String cart_code,
+                                     @Field("product_code") String product_code,
+                                     @Field("quantity") int quantity,
+                                     @Field("size") String size,
+                                     @Field("total_price") Double total_price);
 
     @FormUrlEncoded
     @POST("/Cart/LoadCartItem")
-    Call<List<CartItemEnity>> getAllCartItems(@Header ("Authorization") String token,
+    Call<List<CartItemEnity>> getAllCartItems(@Header("Authorization") String token,
                                               @Field("email") String email);
 
     @FormUrlEncoded
     @POST("/Cart/FindCartCode")
-    Call<CartCodeResponse> findCartCode(@Header ("Authorization") String token,
-                                        @Field("email")String email);
+    Call<CartCodeResponse> findCartCode(@Header("Authorization") String token,
+                                        @Field("email") String email);
 
     @FormUrlEncoded
     @POST("/Cart/CheckItem")
-    Call<CheckItemResponse> checkItem(@Header ("Authorization") String token,
-                                      @Field("email")String email);
+    Call<CheckItemResponse> checkItem(@Header("Authorization") String token,
+                                      @Field("email") String email);
 
     @FormUrlEncoded
     @POST("/Cart/RemoveProduct")
-    Call<ProductResponse> RemoveProduct(@Header ("Authorization") String token,
-                                        @Field("cart_code")String cart_code,
-                                        @Field("product_code")String product_code,
-                                        @Field("quantity")int quantity,
-                                        @Field("size")String size,
-                                        @Field("total_price")Double total_price);
+    Call<BooleanResponse> RemoveProduct(@Header("Authorization") String token,
+                                        @Field("cart_code") String cart_code,
+                                        @Field("product_code") String product_code,
+                                        @Field("quantity") int quantity,
+                                        @Field("size") String size,
+                                        @Field("total_price") Double total_price);
+
+    @FormUrlEncoded
+    @POST("Cart/DeleteItem")
+    Call<BooleanResponse> DeleteItem(@Header("Authorization") String token,
+                                     @Field("cart_code") String cart_code,
+                                     @Field("product_code") String product_code,
+                                     @Field("size") String size);
+
+    @FormUrlEncoded
+    @POST("/Address/LoadAllAddress")
+    Call<List<AddressEntity>> LoadAllAddress(@Header("Authorization") String token,
+                                             @Field("email") String email);
+
+    @FormUrlEncoded
+    @POST("/Address/SetAddressDefault")
+    Call<BooleanResponse> SetAddressDefault(@Header("Authorization") String token,
+                                            @Field("email") String email,
+                                            @Field("address_id") int address_id);
+
+    @FormUrlEncoded
+    @POST("/Order/AddOrder")
+    Call<OrderResponse> AddOrder(@Header("Authorization") String token,
+                                 @Field("state") String state,
+                                 @Field("total_price") Double total_price,
+                                 @Field("email") String email,
+                                 @Field("address") String address);
+
+    @FormUrlEncoded
+    @POST("/Order/AddOrderItem")
+    Call<BooleanResponse> AddOrderItem(@Header("Authorization") String token,
+                                       @Field("order_code") String order_code,
+                                       @Field("product_code") String product_code,
+                                       @Field("quantity") int quantity,
+                                       @Field("size") String size, @Field("total_price") Double total_price);
+
+    @FormUrlEncoded
+    @POST("/Cart/DeleteAllItem")
+    Call<BooleanResponse> DeleteAllItem(@Header("Authorization") String token, @Field("cart_code") String cart_code);
 }

@@ -26,15 +26,11 @@ import com.example.clothingstoreapp.api.ApiService;
 import com.example.clothingstoreapp.custom_interface.IClickItemCartListener;
 import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
 import com.example.clothingstoreapp.entity.CartItemEnity;
-import com.example.clothingstoreapp.entity.ProductEntity;
 import com.example.clothingstoreapp.interceptor.SessionManager;
-import com.example.clothingstoreapp.response.CartCodeResponse;
-import com.example.clothingstoreapp.response.ProductResponse;
-import com.google.gson.Gson;
+import com.example.clothingstoreapp.response.BooleanResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -90,18 +86,18 @@ public class CartExistFragment extends Fragment {
                 CartAdapter cartAdapter = new CartAdapter(list, totalPriceTextView, tempPriceTextView, new IClickItemCartListener() {
                     @Override
                     public void onClickRemove(CartItemEnity cartItemEnity) {
-                        openConfirmDialog(cartItemEnity.getProduct());
+                        openConfirmDialog(cartItemEnity.getCodeCart(), cartItemEnity.getProduct().getProductCode(), cartItemEnity.getSize());
                     }
 
                     @Override
                     public void onClickSubtract(CartItemEnity cartItem) {
                         Dialog dg = BaseActivity.openLoadingDialog(getContext());
                         ApiService.apiService.RemoveProduct(sessionManager.getJwt(), cartItem.getCodeCart(), cartItem.getProduct().getProductCode(), 1,
-                                cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<ProductResponse>() {
+                                cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<BooleanResponse>() {
                             @Override
-                            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
+                            public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
                                 if (response.isSuccessful()) {
-                                    ProductResponse result = response.body();
+                                    BooleanResponse result = response.body();
                                     if ("done".equals(result.getSuccess())) {
                                         dg.dismiss();
 //                                        BaseActivity bs = new BaseActivity();
@@ -114,7 +110,7 @@ public class CartExistFragment extends Fragment {
                             }
 
                             @Override
-                            public void onFailure(Call<ProductResponse> call, Throwable throwable) {
+                            public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
                                 if (dg != null && dg.isShowing()) {
                                     dg.dismiss();
                                 }
@@ -128,11 +124,11 @@ public class CartExistFragment extends Fragment {
                     public void onClickAdd(CartItemEnity cartItem) {
                         Dialog dg = BaseActivity.openLoadingDialog(getContext());
                         ApiService.apiService.AddProduct(sessionManager.getJwt(), cartItem.getCodeCart(), cartItem.getProduct().getProductCode(), 1,
-                                cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<ProductResponse>() {
+                                cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<BooleanResponse>() {
                             @Override
-                            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
+                            public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
                                 if (response.isSuccessful()) {
-                                    ProductResponse result = response.body();
+                                    BooleanResponse result = response.body();
                                     if ("done".equals(result.getSuccess())) {
 //                                        BaseActivity bs = new BaseActivity();
 //                                        bs.callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
@@ -144,7 +140,7 @@ public class CartExistFragment extends Fragment {
                             }
 
                             @Override
-                            public void onFailure(Call<ProductResponse> call, Throwable throwable) {
+                            public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
                                 if (dg != null && dg.isShowing()) {
                                     dg.dismiss();
                                 }
@@ -161,7 +157,18 @@ public class CartExistFragment extends Fragment {
                 btnOrder.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        String totalPrice = totalPriceTextView.getText().toString();
+                        String tempPrice = tempPriceTextView.getText().toString();
+
+                        // Tạo Bundle và đặt dữ liệu vào
+                        Bundle bundle = new Bundle();
+                        bundle.putString("totalPrice", totalPrice);
+                        bundle.putString("tempPrice", tempPrice);
+
+                        // Tạo Fragment mới và truyền Bundle vào nó
                         Fragment fragment = new CartAddressFragment();
+                        fragment.setArguments(bundle);
+
                         FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.containerCart, fragment);
                         fragmentTransaction.addToBackStack(null);
@@ -188,7 +195,7 @@ public class CartExistFragment extends Fragment {
         }
     }
 
-    private void openConfirmDialog(ProductEntity product) {
+    private void openConfirmDialog(String cartCode, String productCode, String size) {
         final Dialog dialog = new Dialog(cartBaseActivity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.confirm_dialog);
@@ -218,9 +225,31 @@ public class CartExistFragment extends Fragment {
         deleteConfirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
-                BaseActivity.openSuccessDialog(cartBaseActivity, "Xóa sản phẩm thành công!");
+                ApiService.apiService.DeleteItem(sessionManager.getJwt(), cartCode, productCode, size).enqueue(new Callback<BooleanResponse>() {
+                    @Override
+                    public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
+                        if (response.isSuccessful()) {
+                            BooleanResponse result = response.body();
+                            if ("done".equals(result.getSuccess())) {
+                                callApiGetAllCartItems();
+                                dialog.dismiss();
+                                BaseActivity.openSuccessDialog(cartBaseActivity, "Xóa sản phẩm thành công!");
+                            }
+                        } else {
+                            BaseActivity.openErrorDialog(getContext(), "Xảy ra lỗi!");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
+                        if (dialog != null && dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+                        BaseActivity.openErrorDialog(getContext(), "Vui lòng thử lại sau!");
+                    }
+                });
             }
+
         });
 
         cancelConfirmBtn.setOnClickListener(new View.OnClickListener() {

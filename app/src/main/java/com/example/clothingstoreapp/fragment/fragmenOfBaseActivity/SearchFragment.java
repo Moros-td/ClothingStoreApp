@@ -27,7 +27,7 @@ import com.example.clothingstoreapp.api.ApiService;
 import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
 import com.example.clothingstoreapp.entity.ProductEntity;
 import com.example.clothingstoreapp.interceptor.SessionManager;
-import com.example.clothingstoreapp.response.ProductResponse;
+import com.example.clothingstoreapp.response.BooleanResponse;
 import com.example.clothingstoreapp.response.CartCodeResponse;
 
 import java.util.ArrayList;
@@ -256,12 +256,12 @@ public class SearchFragment extends Fragment {
     private void callApiPushProduct(ProductEntity product, String size, String cartCode) {
         Dialog dg = BaseActivity.openLoadingDialog(getContext());
         ApiService.apiService.AddProduct(sessionManager.getJwt(), cartCode,
-                product.getProductCode(), 1, size, product.getProductPrice()).enqueue(new Callback<ProductResponse>() {
+                product.getProductCode(), 1, size, product.getProductPrice()).enqueue(new Callback<BooleanResponse>() {
             @Override
-            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
+            public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
                 dg.dismiss();
                 if (response.isSuccessful()) {
-                    ProductResponse result = response.body();
+                    BooleanResponse result = response.body();
                     if ("done".equals(result.getSuccess())){
                         baseActivity.setCartBadge(baseActivity.getCartBadge() + 1);
                         BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công!");
@@ -272,7 +272,7 @@ public class SearchFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ProductResponse> call, Throwable throwable) {
+            public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
                 if (dg != null && dg.isShowing()) {
                     dg.dismiss();
                 }
