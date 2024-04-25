@@ -1,6 +1,7 @@
 package com.example.clothingstoreapp.fragment.fragmentOfCartBaseActivity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -81,100 +82,106 @@ public class CartExistFragment extends Fragment {
         ApiService.apiService.getAllCartItems(sessionManager.getJwt(), sessionManager.getCustom("email")).enqueue(new Callback<List<CartItemEnity>>() {
             @Override
             public void onResponse(Call<List<CartItemEnity>> call, Response<List<CartItemEnity>> response) {
-
                 list = response.body();
-                CartAdapter cartAdapter = new CartAdapter(list, totalPriceTextView, tempPriceTextView, new IClickItemCartListener() {
-                    @Override
-                    public void onClickRemove(CartItemEnity cartItemEnity) {
-                        openConfirmDialog(cartItemEnity.getCodeCart(), cartItemEnity.getProduct().getProductCode(), cartItemEnity.getSize());
-                    }
+                if (list.isEmpty()) {
+                    Intent intent = new Intent(getActivity(), CartBaseActivity.class);
+                    startActivity(intent);
+                    cartBaseActivity.finish();
 
-                    @Override
-                    public void onClickSubtract(CartItemEnity cartItem) {
-                        Dialog dg = BaseActivity.openLoadingDialog(getContext());
-                        ApiService.apiService.RemoveProduct(sessionManager.getJwt(), cartItem.getCodeCart(), cartItem.getProduct().getProductCode(), 1,
-                                cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<BooleanResponse>() {
-                            @Override
-                            public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
-                                if (response.isSuccessful()) {
-                                    BooleanResponse result = response.body();
-                                    if ("done".equals(result.getSuccess())) {
-                                        dg.dismiss();
+                } else {
+                    CartAdapter cartAdapter = new CartAdapter(list, totalPriceTextView, tempPriceTextView, new IClickItemCartListener() {
+                        @Override
+                        public void onClickRemove(CartItemEnity cartItemEnity) {
+                            openConfirmDialog(cartItemEnity.getCodeCart(), cartItemEnity.getProduct().getProductCode(), cartItemEnity.getSize());
+                        }
+
+                        @Override
+                        public void onClickSubtract(CartItemEnity cartItem) {
+                            Dialog dg = BaseActivity.openLoadingDialog(getContext());
+                            ApiService.apiService.RemoveProduct(sessionManager.getJwt(), cartItem.getCodeCart(), cartItem.getProduct().getProductCode(), 1,
+                                    cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<BooleanResponse>() {
+                                @Override
+                                public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
+                                    if (response.isSuccessful()) {
+                                        BooleanResponse result = response.body();
+                                        if ("done".equals(result.getSuccess())) {
+                                            dg.dismiss();
 //                                        BaseActivity bs = new BaseActivity();
 //                                        bs.callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
 
+                                        }
+                                    } else {
+                                        BaseActivity.openErrorDialog(getContext(), "Xảy ra lỗi!");
                                     }
-                                } else {
-                                    BaseActivity.openErrorDialog(getContext(), "Xảy ra lỗi!");
                                 }
-                            }
 
-                            @Override
-                            public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
-                                if (dg != null && dg.isShowing()) {
-                                    dg.dismiss();
-                                }
-                                BaseActivity.openErrorDialog(getContext(), "Hiện không thể truy cập API, vui lòng thử lại sau!");
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onClickAdd(CartItemEnity cartItem) {
-                        Dialog dg = BaseActivity.openLoadingDialog(getContext());
-                        ApiService.apiService.AddProduct(sessionManager.getJwt(), cartItem.getCodeCart(), cartItem.getProduct().getProductCode(), 1,
-                                cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<BooleanResponse>() {
-                            @Override
-                            public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
-                                if (response.isSuccessful()) {
-                                    BooleanResponse result = response.body();
-                                    if ("done".equals(result.getSuccess())) {
-//                                        BaseActivity bs = new BaseActivity();
-//                                        bs.callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
+                                @Override
+                                public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
+                                    if (dg != null && dg.isShowing()) {
                                         dg.dismiss();
                                     }
-                                } else {
-                                    BaseActivity.openErrorDialog(getContext(), "Xảy ra lỗi!");
+                                    BaseActivity.openErrorDialog(getContext(), "Hiện không thể truy cập API, vui lòng thử lại sau!");
+
                                 }
-                            }
+                            });
+                        }
 
-                            @Override
-                            public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
-                                if (dg != null && dg.isShowing()) {
-                                    dg.dismiss();
+                        @Override
+                        public void onClickAdd(CartItemEnity cartItem) {
+                            Dialog dg = BaseActivity.openLoadingDialog(getContext());
+                            ApiService.apiService.AddProduct(sessionManager.getJwt(), cartItem.getCodeCart(), cartItem.getProduct().getProductCode(), 1,
+                                    cartItem.getSize(), cartItem.getProduct().getProductPrice()).enqueue(new Callback<BooleanResponse>() {
+                                @Override
+                                public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
+                                    if (response.isSuccessful()) {
+                                        BooleanResponse result = response.body();
+                                        if ("done".equals(result.getSuccess())) {
+//                                        BaseActivity bs = new BaseActivity();
+//                                        bs.callApiSetCartCountItem(sessionManager.getJwt(), sessionManager.getCustom("email"));
+                                            dg.dismiss();
+                                        }
+                                    } else {
+                                        BaseActivity.openErrorDialog(getContext(), "Xảy ra lỗi!");
+                                    }
                                 }
-                                BaseActivity.openErrorDialog(getContext(), "Hiện không thể truy cập API, vui lòng thử lại sau!");
 
-                            }
-                        });
-                    }
-                });
-                dialog.dismiss();
-                recyclerView.setAdapter(cartAdapter);
-                footerTotal();
-                btnOrder = mView.findViewById(R.id.btn_order);
-                btnOrder.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String totalPrice = totalPriceTextView.getText().toString();
-                        String tempPrice = tempPriceTextView.getText().toString();
+                                @Override
+                                public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
+                                    if (dg != null && dg.isShowing()) {
+                                        dg.dismiss();
+                                    }
+                                    BaseActivity.openErrorDialog(getContext(), "Hiện không thể truy cập API, vui lòng thử lại sau!");
 
-                        // Tạo Bundle và đặt dữ liệu vào
-                        Bundle bundle = new Bundle();
-                        bundle.putString("totalPrice", totalPrice);
-                        bundle.putString("tempPrice", tempPrice);
+                                }
+                            });
+                        }
+                    });
+                    dialog.dismiss();
+                    recyclerView.setAdapter(cartAdapter);
+                    footerTotal();
+                    btnOrder = mView.findViewById(R.id.btn_order);
+                    btnOrder.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String totalPrice = totalPriceTextView.getText().toString();
+                            String tempPrice = tempPriceTextView.getText().toString();
 
-                        // Tạo Fragment mới và truyền Bundle vào nó
-                        Fragment fragment = new CartAddressFragment();
-                        fragment.setArguments(bundle);
+                            // Tạo Bundle và đặt dữ liệu vào
+                            Bundle bundle = new Bundle();
+                            bundle.putString("totalPrice", totalPrice);
+                            bundle.putString("tempPrice", tempPrice);
 
-                        FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.containerCart, fragment);
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
-                    }
-                });
+                            // Tạo Fragment mới và truyền Bundle vào nó
+                            Fragment fragment = new CartAddressFragment();
+                            fragment.setArguments(bundle);
+
+                            FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.replace(R.id.containerCart, fragment);
+                            fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+                        }
+                    });
+                }
             }
 
             @Override

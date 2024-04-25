@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,22 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ListView;
 
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.activity.BaseActivity;
 import com.example.clothingstoreapp.adapter.categorylistview.CategoryListviewAdapter;
 import com.example.clothingstoreapp.adapter.categorylistview.ItemModel;
 import com.example.clothingstoreapp.api.ApiService;
+import com.example.clothingstoreapp.custom_interface.IClickCategoryListener;
 import com.example.clothingstoreapp.entity.CategoryEntity;
-import com.example.clothingstoreapp.entity.ProductEntity;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,7 +47,21 @@ public class ProductFragment extends Fragment {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_product, container, false);
 
-        categoryListviewAdapter = new CategoryListviewAdapter(new ArrayList<>());
+        categoryListviewAdapter = new CategoryListviewAdapter(new ArrayList<>(), new IClickCategoryListener() {
+            @Override
+            public void onClickChoose(CategoryEntity itemModel) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("category_id", itemModel.getId());
+
+                Fragment fragment = new ListProductFragment();
+                fragment.setArguments(bundle);
+
+                FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         RecyclerView mRecyclerView = mView.findViewById(R.id.rv_Category);
@@ -89,17 +100,17 @@ public class ProductFragment extends Fragment {
             for (CategoryEntity category : listCategories) {
                 if ("Áo nữ".equals(category.getCategoryParent().getCategoryName())) {
                     if (tempAo == 0) {
-                        data.add(new ItemModel("ÁO", ItemModel.PARENT_TYPE));
+                        data.add(new ItemModel("ÁO", ItemModel.PARENT_TYPE, category));
                         tempAo++;
                     }
-                    data.add(new ItemModel(category.getCategoryName(), ItemModel.CHILD_TYPE));
+                    data.add(new ItemModel(category.getCategoryName(), ItemModel.CHILD_TYPE, category));
                 }
                 if ("Quần nữ".equals(category.getCategoryParent().getCategoryName())) {
                     if (tempQuan == 0) {
-                        data.add(new ItemModel("QUẦN", ItemModel.PARENT_TYPE));
+                        data.add(new ItemModel("QUẦN", ItemModel.PARENT_TYPE, category));
                         tempQuan++;
                     }
-                    data.add(new ItemModel(category.getCategoryName(), ItemModel.CHILD_TYPE));
+                    data.add(new ItemModel(category.getCategoryName(), ItemModel.CHILD_TYPE, category));
                 }
             }
             // Cập nhật dữ liệu cho RecyclerView
@@ -120,17 +131,17 @@ public class ProductFragment extends Fragment {
             for (CategoryEntity category : listCategories) {
                 if ("Áo nam".equals(category.getCategoryParent().getCategoryName())) {
                     if (tempAo == 0) {
-                        data.add(new ItemModel("ÁO", ItemModel.PARENT_TYPE));
+                        data.add(new ItemModel("ÁO", ItemModel.PARENT_TYPE, category));
                         tempAo++;
                     }
-                    data.add(new ItemModel(category.getCategoryName(), ItemModel.CHILD_TYPE));
+                    data.add(new ItemModel(category.getCategoryName(), ItemModel.CHILD_TYPE, category));
                 }
                 if ("Quần nam".equals(category.getCategoryParent().getCategoryName())) {
                     if (tempQuan == 0) {
-                        data.add(new ItemModel("QUẦN", ItemModel.PARENT_TYPE));
+                        data.add(new ItemModel("QUẦN", ItemModel.PARENT_TYPE, category));
                         tempQuan++;
                     }
-                    data.add(new ItemModel(category.getCategoryName(), ItemModel.CHILD_TYPE));
+                    data.add(new ItemModel(category.getCategoryName(), ItemModel.CHILD_TYPE, category));
                 }
             }
             // Cập nhật dữ liệu cho RecyclerView
