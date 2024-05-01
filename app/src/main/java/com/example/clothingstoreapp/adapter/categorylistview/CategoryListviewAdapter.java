@@ -3,20 +3,25 @@ package com.example.clothingstoreapp.adapter.categorylistview;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.custom_interface.IClickCategoryListener;
 
 import java.util.List;
 
-public class CategoryListviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class CategoryListviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private List<ItemModel> mList;
-    public CategoryListviewAdapter(List<ItemModel> list) {
+    private IClickCategoryListener iClickItemModel;
+    public CategoryListviewAdapter(List<ItemModel> list, IClickCategoryListener iClickItemModel) {
         this.mList = list;
+        this.iClickItemModel = iClickItemModel;
     }
 
     @Override
@@ -60,9 +65,18 @@ public class CategoryListviewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     break;
                 case ItemModel.CHILD_TYPE:
                     ((CategoryDetail) holder).mTitle.setText(object.getCategoryname());
+                    if(iClickItemModel != null){
+                        ((CategoryDetail) holder).mTitle.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                iClickItemModel.onClickChoose(object.getCategory());
+                            }
+                        });
+                    }
                     break;
             }
         }
+
     }
 
     @Override
@@ -71,6 +85,11 @@ public class CategoryListviewAdapter extends RecyclerView.Adapter<RecyclerView.V
             return 0;
         }
         return mList.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return null;
     }
 
     // viewHolder category parent
