@@ -3,6 +3,7 @@ package com.example.clothingstoreapp.api;
 import com.example.clothingstoreapp.entity.AddressEntity;
 import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.CategoryEntity;
+import com.example.clothingstoreapp.entity.CustomerEntity;
 import com.example.clothingstoreapp.entity.ProductEntity;
 import com.example.clothingstoreapp.response.BooleanResponse;
 import com.example.clothingstoreapp.response.CartCodeResponse;
@@ -69,7 +70,7 @@ public interface ApiService {
     @POST("/Auth/Register")
     Call<LoginResponse> register(@Field("email") String email, @Field("fullname") String fullName,
                                  @Field("password") String password, @Field("retype_password") String retype_password,
-                                 @Field("phone") String phone);
+                                 @Field("phone") String phone, @Field("address") String address);
 
     @FormUrlEncoded
     @POST("/Auth/Verify")
@@ -155,4 +156,21 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/Cart/DeleteAllItem")
     Call<BooleanResponse> DeleteAllItem(@Header("Authorization") String token, @Field("cart_code") String cart_code);
+
+    @FormUrlEncoded
+    @POST("/Customer/getCustomerInfo")
+    Call<CustomerEntity> getCustomerInfo(@Header("Authorization") String token,
+                                   @Field("email") String email);
+
+    @FormUrlEncoded
+    @POST("/Customer/updateCustomerInfo")
+    Call<LoginResponse> updateCustomerInfo(@Header("Authorization") String token,
+                                         @Field("email") String email, @Field("fullName") String fullName,
+                                         @Field("phone") String phone);
+
+    @FormUrlEncoded
+    @POST("/Customer/updateCustomerPassword")
+    Call<LoginResponse> updateCustomerPassword(@Header("Authorization") String token,
+                                           @Field("email") String email, @Field("password") String password,
+                                           @Field("newPassword") String newPassword);
 }

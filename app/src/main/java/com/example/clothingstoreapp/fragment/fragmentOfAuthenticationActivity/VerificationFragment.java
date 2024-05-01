@@ -86,7 +86,7 @@ public class VerificationFragment extends Fragment {
                                                         BaseActivity.openErrorDialog(getContext(), "Sai mã xác nhận");
                                                     }
                                                     else{
-                                                        BaseActivity.openErrorDialog(getContext(), "Lỗi");
+                                                        BaseActivity.openErrorDialog(getContext(), loginResponse.getErr());
                                                     }
                                                 }
                                             }

@@ -133,4 +133,13 @@ public class AccountInfoActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(fragmentTag);
         fragmentTransaction.commit();
     }
+
+    public void popFragmentChangePassword(){
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+
+            getSupportFragmentManager().popBackStack();
+            currentFragment = FRAGMENT_ACCOUNT_INFO;
+            textViewTitle.setText("Thông tin tài khoản");
+        }
+    }
 }
