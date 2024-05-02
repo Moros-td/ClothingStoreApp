@@ -2,7 +2,9 @@ package com.example.clothingstoreapp.entity;
 
 import com.google.gson.annotations.SerializedName;
 
-public class OrderItemEntity {
+import java.io.Serializable;
+
+public class OrderItemEntity implements Serializable {
     @SerializedName("order_item_id")
     private int orderItemId;
     @SerializedName("order_code")

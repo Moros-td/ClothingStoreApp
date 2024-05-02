@@ -56,11 +56,9 @@ public class PasswordChangeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 v.startAnimation(animAlpha);
-
                 String currentPass = currentPasswordEditText.getText().toString();
                 String newPass = newPasswordEditText.getText().toString();
                 String retypeNewPass = retypeNewPasswordEditText.getText().toString();
-
                 boolean check = true;
 
                 // Kiểm tra mật khẩu

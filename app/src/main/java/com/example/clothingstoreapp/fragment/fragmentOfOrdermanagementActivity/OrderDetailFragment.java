@@ -1,6 +1,7 @@
 package com.example.clothingstoreapp.fragment.fragmentOfOrdermanagementActivity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -19,9 +20,11 @@ import android.widget.Toast;
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.activity.BaseActivity;
 import com.example.clothingstoreapp.activity.OrderManagementActivity;
+import com.example.clothingstoreapp.activity.ProductDetailActivity;
 import com.example.clothingstoreapp.adapter.OrderAdapter;
 import com.example.clothingstoreapp.adapter.OrderItemFullInfoAdapter;
 import com.example.clothingstoreapp.api.ApiService;
+import com.example.clothingstoreapp.custom_interface.IClickOrderItemListener;
 import com.example.clothingstoreapp.entity.OrderEntity;
 import com.example.clothingstoreapp.entity.OrderItemEntity;
 import com.example.clothingstoreapp.entity.ProductEntity;
@@ -79,7 +82,12 @@ public class OrderDetailFragment extends Fragment {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(orderManagementActivity);
             recyclerView.setLayoutManager(linearLayoutManager);
 
-            OrderItemFullInfoAdapter orderItemFullInfoAdapter = new OrderItemFullInfoAdapter(list);
+            OrderItemFullInfoAdapter orderItemFullInfoAdapter = new OrderItemFullInfoAdapter(list, new IClickOrderItemListener() {
+                @Override
+                public void onClickItemOrder(ProductEntity product) {
+                    moveToDetailProductActivity(product);
+                }
+            });
             recyclerView.setAdapter(orderItemFullInfoAdapter);
 
             if(orderEntity.getPaymentCode() != null){
@@ -107,6 +115,14 @@ public class OrderDetailFragment extends Fragment {
         }
 
         return mView;
+    }
+
+    private void moveToDetailProductActivity(ProductEntity product) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("product", product);
+        Intent intent = new Intent(getContext(), ProductDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     private void callApiCancelOrder(String orderCode) {

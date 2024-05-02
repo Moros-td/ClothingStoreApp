@@ -27,6 +27,8 @@ public class ProductEntity implements Serializable {
     @SerializedName("update_latest")
     private String updateLatest;
 
+    public ProductEntity() {
+    }
 
     public ProductEntity(String productCode, String productName, int productQuantity, Double productPrice) {
         this.productCode = productCode;
