@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.activity.AuthenticationActivity;
 import com.example.clothingstoreapp.activity.BaseActivity;
+import com.example.clothingstoreapp.activity.ListProductActivity;
+import com.example.clothingstoreapp.activity.ProductDetailActivity;
 import com.example.clothingstoreapp.adapter.AddressAdapter;
 import com.example.clothingstoreapp.adapter.ListProductAdapter;
 import com.example.clothingstoreapp.adapter.ProductAdapter;
@@ -44,7 +46,7 @@ import retrofit2.Response;
 public class ListProductFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private BaseActivity baseActivity;
+    private ListProductActivity listProductActivity;
     private View mView;
 
     private Dialog dialog;
@@ -58,11 +60,11 @@ public class ListProductFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_list_product, container, false);
-        baseActivity = (BaseActivity) getActivity();
+        listProductActivity = (ListProductActivity) getActivity();
         recyclerView = mView.findViewById(R.id.rcv_product);
-        sessionManager = new SessionManager(baseActivity);
+        sessionManager = new SessionManager(listProductActivity);
         //set layout manager cho rcv
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(baseActivity, 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(listProductActivity, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
 
         listProducts = new ArrayList<>();
@@ -74,10 +76,10 @@ public class ListProductFragment extends Fragment {
     }
 
     private void callApiGetProductsByCategory() {
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            // Lấy dữ liệu từ Bundle
-            int categoryId = bundle.getInt("category_id");
+        //Lấy dữ liệu bundle
+        Bundle args = getArguments();
+        if (args != null) {
+            int categoryId = args.getInt("category_id");
             ApiService.apiService.GetProductByCategory(categoryId).enqueue(new Callback<List<ProductEntity>>() {
                 @Override
                 public void onResponse(Call<List<ProductEntity>> call, Response<List<ProductEntity>> response) {
@@ -88,7 +90,6 @@ public class ListProductFragment extends Fragment {
                     ListProductAdapter productAdapter = new ListProductAdapter(listProducts, new IClickItemProductListener() {
                         @Override
                         public void onClickAddProduct(ProductEntity product) {
-                            // sự kiện nút add sản phẩm
                             String token = sessionManager.getJwt();
                             if (token != null)
                                 openConfirmSizeDialog(product);
@@ -97,6 +98,15 @@ public class ListProductFragment extends Fragment {
 
                                 startActivity(authenticationActivity);
                             }
+                        }
+
+                        @Override
+                        public void onClickOpenDetail(ProductEntity product) {
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("product", product);
+                            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
                         }
                     });
                     recyclerView.setAdapter(productAdapter);
@@ -124,7 +134,7 @@ public class ListProductFragment extends Fragment {
     }
 
     private void openConfirmSizeDialog(ProductEntity product) {
-        final Dialog dialog = new Dialog(baseActivity);
+        final Dialog dialog = new Dialog(listProductActivity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.confirm_size_dialog);
 
@@ -259,7 +269,7 @@ public class ListProductFragment extends Fragment {
                 if (response.isSuccessful()) {
                     BooleanResponse result = response.body();
                     if ("done".equals(result.getSuccess())){
-                        baseActivity.setCartBadge(baseActivity.getCartBadge() + 1);
+                        listProductActivity.setCartBadge(listProductActivity.getCartBadge() + 1);
                         BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công!");
                     }
                 } else {

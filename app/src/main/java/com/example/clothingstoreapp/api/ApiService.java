@@ -157,6 +157,7 @@ public interface ApiService {
     @POST("/Cart/DeleteAllItem")
     Call<BooleanResponse> DeleteAllItem(@Header("Authorization") String token, @Field("cart_code") String cart_code);
 
+    @FormUrlEncoded
     @POST("/Product/GetProductByCategory")
     Call<List<ProductEntity>> GetProductByCategory(@Field("category_id") int category_id);
     @FormUrlEncoded

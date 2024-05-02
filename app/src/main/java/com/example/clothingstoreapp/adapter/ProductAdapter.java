@@ -1,11 +1,13 @@
 package com.example.clothingstoreapp.adapter;
 
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -103,6 +105,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     iClickItemProductListener.onClickAddProduct(productEntity);
                 }
             });
+            holder.productItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    iClickItemProductListener.onClickOpenDetail(productEntity);
+                }
+            });
         }
     }
 
@@ -158,6 +166,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 textViewProductPrice;
 
         private View viewProductColor;
+        private LinearLayout productItem;
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -167,6 +176,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             textViewProductPrice = itemView.findViewById(R.id.textView_product_price);
             viewProductColor = itemView.findViewById(R.id.view_product_color);
             imageViewAddProduct = itemView.findViewById(R.id.imageView_add_product);
+            productItem = itemView.findViewById(R.id.product_item);
         }
 
     }

@@ -82,7 +82,6 @@ public class SearchFragment extends Fragment {
                 ProductAdapter productAdapter = new ProductAdapter(listProducts, new IClickItemProductListener() {
                     @Override
                     public void onClickAddProduct(ProductEntity product) {
-                        // sự kiện nút add sản phẩm
                         String token = sessionManager.getJwt();
                         if (token != null)
                             openConfirmSizeDialog(product);
@@ -91,6 +90,11 @@ public class SearchFragment extends Fragment {
 
                             startActivity(authenticationActivity);
                         }
+                    }
+
+                    @Override
+                    public void onClickOpenDetail(ProductEntity product) {
+
                     }
                 });
                 recyclerView.setAdapter(productAdapter);

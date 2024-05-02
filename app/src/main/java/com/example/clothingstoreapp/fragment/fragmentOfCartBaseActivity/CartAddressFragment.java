@@ -77,7 +77,7 @@ public class CartAddressFragment extends Fragment {
             // Lấy dữ liệu từ Bundle
             String total = bundle.getString("totalPrice");
             String temp = bundle.getString("tempPrice");
-            totalPrice = Double.valueOf(total);
+            totalPrice = bundle.getDouble("total");
 
             totalPriceTextView = mView.findViewById(R.id.cart_totalPrice);
             totalPriceTextView.setText(total);

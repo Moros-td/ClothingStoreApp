@@ -1,6 +1,7 @@
 package com.example.clothingstoreapp.fragment.fragmenOfBaseActivity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
@@ -16,6 +17,7 @@ import android.widget.Button;
 
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.activity.BaseActivity;
+import com.example.clothingstoreapp.activity.ListProductActivity;
 import com.example.clothingstoreapp.adapter.categorylistview.CategoryListviewAdapter;
 import com.example.clothingstoreapp.adapter.categorylistview.ItemModel;
 import com.example.clothingstoreapp.api.ApiService;
@@ -52,14 +54,10 @@ public class ProductFragment extends Fragment {
             public void onClickChoose(CategoryEntity itemModel) {
                 Bundle bundle = new Bundle();
                 bundle.putInt("category_id", itemModel.getId());
+                Intent intent = new Intent(requireContext(), ListProductActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
 
-                Fragment fragment = new ListProductFragment();
-                fragment.setArguments(bundle);
-
-                FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.container, fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
             }
         });
 

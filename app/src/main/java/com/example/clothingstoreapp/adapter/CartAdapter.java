@@ -56,7 +56,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             holder.textViewProductName.setText(cartItemEntity.getProduct().getProductName());
             holder.textViewSize.setText(cartItemEntity.getSize());
             holder.textViewQuantity.setText(String.valueOf(cartItemEntity.getQuantity()));
-            holder.textViewProductPrice.setText(String.valueOf(cartItemEntity.getTotalPrice()));
+            String priceString = String.format(Locale.getDefault(), "%.3fđ", cartItemEntity.getTotalPrice());
+            holder.textViewProductPrice.setText(priceString);
 //set ảnh
             String path = cartItemEntity.getProduct().getImages().get(0);
             String pathImage = "";
@@ -116,8 +117,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                             holder.textViewQuantity.setText(String.valueOf(newQuantity));
                             holder.textViewProductPrice.setText(String.valueOf(newQuantity * cartItemEntity.getProduct().getProductPrice()));
                             total = total - cartItemEntity.getProduct().getProductPrice();
-                            textViewTempPrice.setText(String.valueOf(total));
-                            textViewTotalPrice.setText(String.valueOf(total));
+                            String priceString = String.format(Locale.getDefault(), "%.3fđ", total);
+                            textViewTempPrice.setText(priceString);
+                            textViewTotalPrice.setText(priceString);
                         }
                     }
                 });
@@ -132,8 +134,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                             holder.textViewQuantity.setText(String.valueOf(newQuantity));
                             holder.textViewProductPrice.setText(String.valueOf(newQuantity * cartItemEntity.getProduct().getProductPrice()));
                             total = total + cartItemEntity.getProduct().getProductPrice();
-                            textViewTempPrice.setText(String.valueOf(total));
-                            textViewTotalPrice.setText(String.valueOf(total));
+                            String priceString = String.format(Locale.getDefault(), "%.3fđ", total);
+                            textViewTempPrice.setText(priceString);
+                            textViewTotalPrice.setText(priceString);
                         }
                     }
                 });
@@ -173,7 +176,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         }
     }
     public void footerTotal() {
-        textViewTotalPrice.setText(String.valueOf(total));
-        textViewTempPrice.setText(String.valueOf(total));
+        String priceString = String.format(Locale.getDefault(), "%.3fđ", total);
+        textViewTempPrice.setText(priceString);
+        textViewTotalPrice.setText(priceString);
     }
 }

@@ -165,11 +165,15 @@ public class CartExistFragment extends Fragment {
                         public void onClick(View v) {
                             String totalPrice = totalPriceTextView.getText().toString();
                             String tempPrice = tempPriceTextView.getText().toString();
+                            String cleanedTotalPrice = totalPrice.replaceAll("[đ,]", "");
+                            cleanedTotalPrice = cleanedTotalPrice.substring(0, cleanedTotalPrice.length() - 3);
+                            Double total = Double.parseDouble(cleanedTotalPrice);
 
                             // Tạo Bundle và đặt dữ liệu vào
                             Bundle bundle = new Bundle();
                             bundle.putString("totalPrice", totalPrice);
                             bundle.putString("tempPrice", tempPrice);
+                            bundle.putDouble("total", total);
 
                             // Tạo Fragment mới và truyền Bundle vào nó
                             Fragment fragment = new CartAddressFragment();
