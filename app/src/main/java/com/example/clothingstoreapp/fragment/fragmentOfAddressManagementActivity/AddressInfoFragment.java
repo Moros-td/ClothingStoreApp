@@ -1,29 +1,56 @@
 package com.example.clothingstoreapp.fragment.fragmentOfAddressManagementActivity;
 
+import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.activity.AddressManagementActivity;
+import com.example.clothingstoreapp.activity.BaseActivity;
+import com.example.clothingstoreapp.api.ApiService;
+import com.example.clothingstoreapp.entity.AddressEntity;
+import com.example.clothingstoreapp.interceptor.SessionManager;
+import com.example.clothingstoreapp.response.BooleanResponse;
 
+import java.io.DataInput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class AddressInfoFragment extends Fragment {
     private Spinner spinnerProvince, spinnerDistrict, spinnerVillage;
     private List<String> provinceList, districtList, villageList;
     private ArrayAdapter<String> provinceAdapter, districtAdapter, villageAdapter;
+
+    private Button btnUpdateAddress;
+    private Dialog dialog;
     private int temp = 0;
+    private boolean isEdit = false;
+
+    private AddressEntity addressEntity;
+
+    private SessionManager sessionManager;
+
+    private AddressManagementActivity addressManagementActivity;
 
     public AddressInfoFragment() {
         // Required empty public constructor
@@ -35,29 +62,167 @@ public class AddressInfoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_address_info, container, false);
         EditText editTextStreet = view.findViewById(R.id.editTextStreet);
+        btnUpdateAddress = view.findViewById(R.id.btnUpdateAddress);
+        addressManagementActivity = (AddressManagementActivity) getContext();
         // Ánh xạ Spinner từ layout
         spinnerProvince = view.findViewById(R.id.spinner_province);
         spinnerDistrict = view.findViewById(R.id.spinner_district);
         spinnerVillage = view.findViewById(R.id.spinner_village);
-
+        sessionManager = new SessionManager(getContext());
         // Khởi tạo danh sách dữ liệu
         provinceList = new ArrayList<>();
         districtList = new ArrayList<>();
         villageList = new ArrayList<>();
         Bundle bundle = getArguments();
         if (bundle != null) {
-            String address = bundle.getString("address");
-            String[] parts = address.split(",");
+            addressEntity = (AddressEntity) bundle.get("address");
+            String[] parts = addressEntity.getAddress().split(",");
             editTextStreet.setText(parts[0]);
             String province = parts[3].trim();
             String district = parts[2].trim();
             String village = parts[1].trim();
+            isEdit = true;
             setupCustom(province, district, village);
 
         } else {
             setupCustom(null, null, null);
         }
+
+        btnUpdateAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String province = spinnerProvince.getSelectedItem().toString();
+                String district = spinnerDistrict.getSelectedItem().toString();
+                String village = spinnerVillage.getSelectedItem().toString();
+                String street = editTextStreet.getText().toString();
+                boolean check = true;
+
+                if(province.contains("/")){
+                    TextView errView = (TextView) spinnerProvince.getSelectedView();
+                    errView.setError("");
+                    errView.setTextColor(Color.RED);
+                    errView.setText("Vui lòng chọn tỉnh/thành phố");
+                    check = false;
+                }
+
+                if(district.contains("/")){
+                    TextView errView = (TextView) spinnerDistrict.getSelectedView();
+                    errView.setError("");
+                    errView.setTextColor(Color.RED);
+                    errView.setText("Vui lòng chọn quận/huyện");
+                    check = false;
+                }
+
+                if(village.contains("/")){
+                    TextView errView = (TextView) spinnerVillage.getSelectedView();
+                    errView.setError("");
+                    errView.setTextColor(Color.RED);
+                    errView.setText("Vui lòng chọn phường/xã");
+                    check = false;
+                }
+
+                if (street.isEmpty()) {
+                    editTextStreet.setError("Không được để trống đường");
+                    check = false;
+                }
+
+                if(!check)
+                    return;
+
+                String address = street + ", " + village + ", " + district + ", " + province;
+                if(isEdit){
+                    callApiUpdateAddress(address, addressEntity.getAddress_id());
+                }
+                else{
+                    callApiAddAddress(address);
+                }
+            }
+        });
         return view;
+    }
+
+    private void callApiAddAddress(String address) {
+        if(sessionManager.isLoggedIn()){
+            String token = sessionManager.getJwt();
+            String email = sessionManager.getCustom("email");
+            ApiService.apiService.AddAddress(token, email, address)
+                    .enqueue(new Callback<BooleanResponse>() {
+                        @Override
+                        public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                            BooleanResponse booleanResponse = response.body();
+                            if(booleanResponse != null){
+                                if("done".equals(booleanResponse.getSuccess())){
+                                    BaseActivity.openSuccessDialog(getContext(), "Thêm địa chỉ thành công!");
+                                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            addressManagementActivity.popFragmentOrderDetail();
+                                        }
+                                    }, 2000);
+                                }
+                                else{
+                                    BaseActivity.openErrorDialog(getContext(), "Thêm địa chỉ thất bại!");
+                                }
+                            }
+                            else{
+                                BaseActivity.openErrorDialog(getContext(), "Lỗi");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                            BaseActivity.openErrorDialog(getContext(), "Không thể truy cập api");
+                        }
+                    });
+        }
+    }
+
+    private void callApiUpdateAddress(String address, int addressId) {
+        if(sessionManager.isLoggedIn()){
+            String token = sessionManager.getJwt();
+            String email = sessionManager.getCustom("email");
+            ApiService.apiService.UpdateAddress(token, email, address, addressId)
+                    .enqueue(new Callback<BooleanResponse>() {
+                        @Override
+                        public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                            BooleanResponse booleanResponse = response.body();
+                            if(booleanResponse != null){
+                                if("done".equals(booleanResponse.getSuccess())){
+                                    BaseActivity.openSuccessDialog(getContext(), "Sửa địa chỉ thành công!");
+                                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            addressManagementActivity.popFragmentOrderDetail();
+                                        }
+                                    }, 2000);
+                                }
+                                else{
+                                    BaseActivity.openErrorDialog(getContext(), "Sửa địa chỉ thất bại!");
+                                }
+                            }
+                            else{
+                                BaseActivity.openErrorDialog(getContext(), "Lỗi");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<BooleanResponse> call, Throwable throwable) {
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                            BaseActivity.openErrorDialog(getContext(), "Không thể truy cập api");
+                        }
+                    });
+        }
     }
 
     private void setupCustom(String province, String district, String village) {
