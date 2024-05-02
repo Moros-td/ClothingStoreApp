@@ -1,14 +1,17 @@
 package com.example.clothingstoreapp.entity;
 
-import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
 public class OrderItemEntity {
+    @SerializedName("order_item_id")
     private int orderItemId;
+    @SerializedName("order_code")
     private String orderCode;
 
     private ProductEntity product;
     private int quantity;
     private String size;
+    @SerializedName("total_price")
     private Double totalPrice;
 
     public int getOrderItemId() {

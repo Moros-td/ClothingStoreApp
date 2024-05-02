@@ -1,5 +1,6 @@
 package com.example.clothingstoreapp.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,23 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         } else {
             holder.orderCodeTextView.setText(orderEntity.getOrderCode());
             holder.orderDateTextView.setText(String.valueOf(orderEntity.getOrderDate()));
-            holder.orderStateTextView.setText(orderEntity.getOrderState());
+
+            if(orderEntity.getOrderState().equals("pending")){
+                holder.orderStateTextView.setText("Đang xử lý");
+                holder.orderStateTextView.setTextColor(Color.parseColor("#f5e642"));
+            }
+            else if(orderEntity.getOrderState().equals("delivering")){
+                holder.orderStateTextView.setText("Đang vận chuyển");
+                holder.orderStateTextView.setTextColor(Color.parseColor("#2933f0"));
+            }
+            else if(orderEntity.getOrderState().equals("cancelled")){
+                holder.orderStateTextView.setText("Đã hủy");
+                holder.orderStateTextView.setTextColor(Color.parseColor("#ab1a13"));
+            }
+            else{
+                holder.orderStateTextView.setText("Giao hàng thành công");
+                holder.orderStateTextView.setTextColor(Color.parseColor("#42ad2a"));
+            }
             holder.totalOrderPriceTextView.setText(String.valueOf(orderEntity.getTotalPrice()));
 
             List<OrderItemEntity> listOrderItem = orderEntity.getListOrderItem();

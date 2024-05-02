@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.entity.OrderItemEntity;
 
@@ -47,6 +48,46 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
             holder.sizeTextView.setText(orderItemEntity.getSize());
             holder.totalPriceTextView.setText(String.valueOf(orderItemEntity.getTotalPrice()));
 
+            //set ảnh
+            String path = orderItemEntity.getProduct().getImages().get(0);
+            String pathImage = "";
+            if (path != null && path.length() > 1) {
+                String newPath = path.substring(1);
+                pathImage = "http://10.0.2.2:8096"+newPath;
+            }
+            Glide.with(holder.productImageView).load(pathImage).into(holder.productImageView);
+
+            // set màu
+            if(orderItemEntity.getProduct().getProductColor().equals("red")){
+                holder.colorView.setBackgroundResource(R.drawable.circle_background_red);
+            }
+            else if(orderItemEntity.getProduct().getProductColor().equals("pink")){
+                holder.colorView.setBackgroundResource(R.drawable.circle_background_pink);
+            }
+            else if(orderItemEntity.getProduct().getProductColor().equals("yellow")){
+                holder.colorView.setBackgroundResource(R.drawable.circle_background_yellow);
+            }
+            else if(orderItemEntity.getProduct().getProductColor().equals("green")){
+                holder.colorView.setBackgroundResource(R.drawable.circle_backgound_green);
+            }
+            else if(orderItemEntity.getProduct().getProductColor().equals("blue")){
+                holder.colorView.setBackgroundResource(R.drawable.circle_background_blue);
+            }
+            else if(orderItemEntity.getProduct().getProductColor().equals("beige")){
+                holder.colorView.setBackgroundResource(R.drawable.cirlce_background_beige);
+            }
+            else if(orderItemEntity.getProduct().getProductColor().equals("white")){
+                holder.colorView.setBackgroundResource(R.drawable.circle_background_white);
+            }
+            else if(orderItemEntity.getProduct().getProductColor().equals("black")){
+                holder.colorView.setBackgroundResource(R.drawable.circle_backgound_black);
+            }
+            else if(orderItemEntity.getProduct().getProductColor().equals("brown")){
+                holder.colorView.setBackgroundResource(R.drawable.circle_background_brown);
+            }
+            else if(orderItemEntity.getProduct().getProductColor().equals("gray")){
+                holder.colorView.setBackgroundResource(R.drawable.circle_background_gray);
+            }
             // sự kiện các nút
 //            if(iClickItemCartListener != null){
 //            }
@@ -65,6 +106,7 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
         private TextView
                 productNameTextView, quantityTextView, sizeTextView, totalPriceTextView;
         private ImageView productImageView;
+        private View colorView;
 
         public ProductInOrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -73,6 +115,7 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
             sizeTextView = itemView.findViewById(R.id.sizeTextView);
             totalPriceTextView = itemView.findViewById(R.id.totalPriceTextView);
             productImageView = itemView.findViewById(R.id.productImageView);
+            colorView = itemView.findViewById(R.id.colorView);
         }
     }
 }

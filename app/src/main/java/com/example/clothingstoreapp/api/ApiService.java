@@ -4,6 +4,7 @@ import com.example.clothingstoreapp.entity.AddressEntity;
 import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.CategoryEntity;
 import com.example.clothingstoreapp.entity.CustomerEntity;
+import com.example.clothingstoreapp.entity.OrderEntity;
 import com.example.clothingstoreapp.entity.ProductEntity;
 import com.example.clothingstoreapp.response.BooleanResponse;
 import com.example.clothingstoreapp.response.CartCodeResponse;
@@ -177,4 +178,11 @@ public interface ApiService {
                                            @Field("email") String email, @Field("password") String password,
                                            @Field("newPassword") String newPassword);
 
+    @FormUrlEncoded
+    @POST("/Order/getAllOrders")
+    Call<List<OrderEntity>> getAllOrders(@Header("Authorization") String token, @Field("email") String email);
+
+    @FormUrlEncoded
+    @POST("/Order/cancelOrder")
+    Call<LoginResponse> cancelOrder(@Header("Authorization") String token, @Field("orderCode") String orderCode);
 }
