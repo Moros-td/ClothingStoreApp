@@ -242,7 +242,7 @@ public class ProductDetailFragment extends Fragment {
     private void callApiPushProduct(ProductEntity product, String size, String cartCode) {
         Dialog dg = BaseActivity.openLoadingDialog(getContext());
         ApiService.apiService.AddProduct(sessionManager.getJwt(), cartCode,
-                product.getProductCode(), quantity, size, product.getProductPrice()).enqueue(new Callback<BooleanResponse>() {
+                product.getProductCode(), quantity, size, quantity * product.getProductPrice()).enqueue(new Callback<BooleanResponse>() {
             @Override
             public void onResponse(Call<BooleanResponse> call, Response<BooleanResponse> response) {
                 dg.dismiss();

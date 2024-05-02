@@ -115,9 +115,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                         if (newQuantity > 0) {
                             cartItemEntity.setQuantity(newQuantity);
                             holder.textViewQuantity.setText(String.valueOf(newQuantity));
-                            holder.textViewProductPrice.setText(String.valueOf(newQuantity * cartItemEntity.getProduct().getProductPrice()));
+
+                            String priceString = String.format(Locale.getDefault(), "%.3fđ", newQuantity * cartItemEntity.getProduct().getProductPrice());
+                            holder.textViewProductPrice.setText(priceString);
                             total = total - cartItemEntity.getProduct().getProductPrice();
-                            String priceString = String.format(Locale.getDefault(), "%.3fđ", total);
+                            priceString = String.format(Locale.getDefault(), "%.3fđ", total);
                             textViewTempPrice.setText(priceString);
                             textViewTotalPrice.setText(priceString);
                         }
@@ -132,9 +134,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                         if (newQuantity <= cartItemEntity.getProduct().getProductQuantity()) {
                             cartItemEntity.setQuantity(newQuantity);
                             holder.textViewQuantity.setText(String.valueOf(newQuantity));
-                            holder.textViewProductPrice.setText(String.valueOf(newQuantity * cartItemEntity.getProduct().getProductPrice()));
+
+                            String priceString = String.format(Locale.getDefault(), "%.3fđ", newQuantity * cartItemEntity.getProduct().getProductPrice());
+                            holder.textViewProductPrice.setText(priceString);
+
                             total = total + cartItemEntity.getProduct().getProductPrice();
-                            String priceString = String.format(Locale.getDefault(), "%.3fđ", total);
+                            priceString = String.format(Locale.getDefault(), "%.3fđ", total);
                             textViewTempPrice.setText(priceString);
                             textViewTotalPrice.setText(priceString);
                         }
