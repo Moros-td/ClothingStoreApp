@@ -62,7 +62,7 @@ public class AddressManagementAdapter extends RecyclerView.Adapter<AddressManage
             holder.textViewName.setText(addressEntity.getName());
             holder.textViewPhone.setText(addressEntity.getPhone());
             holder.textViewAddress.setText(addressEntity.getAddress());
-            if(position == 0){
+            if(addressEntity.getIs_default() == 1){
                 holder.addressDefault.setVisibility(View.VISIBLE);
             }else{
                 holder.addressDefault.setVisibility(View.GONE);
@@ -80,6 +80,7 @@ public class AddressManagementAdapter extends RecyclerView.Adapter<AddressManage
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             if (item.getItemId() == R.id.menu_set_default) {
+                                iClickItemEditAddressListener.onClickSetDefaultAddress(addressEntity);
                                 return true;
                             }
                             if (item.getItemId() == R.id.menu_edit) {
@@ -87,6 +88,7 @@ public class AddressManagementAdapter extends RecyclerView.Adapter<AddressManage
                                 return true;
                             }
                             if (item.getItemId() == R.id.menu_delete) {
+                                iClickItemEditAddressListener.onClickDeleteAddress(addressEntity);
                                return true;
                             }
                             return false;
