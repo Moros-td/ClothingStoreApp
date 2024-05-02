@@ -121,7 +121,7 @@ public class PasswordChangeFragment extends Fragment {
                                         public void run() {
                                             accountInfoActivity.popFragmentChangePassword();
                                         }
-                                    }, 3000);
+                                    }, 2000);
                                 }
                                 else {
                                     currentPasswordEditText.setError(response1.getErr());

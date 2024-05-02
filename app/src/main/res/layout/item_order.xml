@@ -11,53 +11,49 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp">
+
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp">
+            android:orientation="horizontal"
+            android:padding="10dp">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/orderCodeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginEnd="130dp"
-                android:padding="10dp">
+                android:text="DH001"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginEnd="180dp"/>
 
-                <TextView
-                    android:id="@+id/orderCodeTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="DH001"
-                    android:textSize="20dp"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="NGÀY ĐẶT HÀNG:"/>
-            </LinearLayout>
+            <TextView
+                android:id="@+id/orderStateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ĐÃ GIAO"
+                android:textColor="@color/green"
+                android:textStyle="bold"
+                android:textSize="18dp"/>
+        </LinearLayout>
 
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:text="NGÀY ĐẶT HÀNG:"
+                android:layout_marginEnd="150dp"/>
 
-                <TextView
-                    android:id="@+id/orderStateTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="ĐÃ GIAO"
-                    android:textColor="@color/green"
-                    android:textStyle="bold"
-                    android:textSize="18dp"/>
-                <TextView
-                    android:id="@+id/orderDateTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="31/01/2024 22:34"/>
-            </LinearLayout>
-
+            <TextView
+                android:id="@+id/orderDateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="31/01/2024 22:34"/>
         </LinearLayout>
 
        <androidx.recyclerview.widget.RecyclerView

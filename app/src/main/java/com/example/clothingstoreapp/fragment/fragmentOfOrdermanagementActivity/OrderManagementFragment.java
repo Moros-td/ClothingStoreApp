@@ -1,5 +1,6 @@
 package com.example.clothingstoreapp.fragment.fragmentOfOrdermanagementActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,19 +13,26 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.activity.BaseActivity;
 import com.example.clothingstoreapp.activity.CartBaseActivity;
 import com.example.clothingstoreapp.activity.OrderManagementActivity;
 import com.example.clothingstoreapp.adapter.CartAdapter;
 import com.example.clothingstoreapp.adapter.OrderAdapter;
+import com.example.clothingstoreapp.api.ApiService;
 import com.example.clothingstoreapp.custom_interface.IClickItemOrderListener;
 import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.OrderEntity;
 import com.example.clothingstoreapp.entity.OrderItemEntity;
 import com.example.clothingstoreapp.entity.ProductEntity;
+import com.example.clothingstoreapp.interceptor.SessionManager;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class OrderManagementFragment extends Fragment {
 
@@ -32,6 +40,8 @@ public class OrderManagementFragment extends Fragment {
 
     private OrderManagementActivity orderManagementActivity;
     private List<OrderEntity> list;
+    Dialog dialog;
+    SessionManager sessionManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,18 +50,12 @@ public class OrderManagementFragment extends Fragment {
         recyclerView = mView.findViewById(R.id.rcv_order);
 
         orderManagementActivity = (OrderManagementActivity) getContext();
+        sessionManager = new SessionManager(getContext());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(orderManagementActivity);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        list = getListOrder();
-        OrderAdapter orderAdapter = new OrderAdapter(list, new IClickItemOrderListener() {
-            @Override
-            public void onClickOrder(OrderEntity orderEntity) {
-                replaceFragmentAndMoveData(orderEntity);
-            }
-        });
-        recyclerView.setAdapter(orderAdapter);
+        callApiGetAllOrders();
         return mView;
     }
 
@@ -61,41 +65,38 @@ public class OrderManagementFragment extends Fragment {
         orderManagementActivity.openFragment(OrderManagementActivity.FRAGMENT_ORDER_DETAIL, bundle);
     }
 
-    private List<OrderEntity> getListOrder() {
-        List<OrderEntity> list = new ArrayList<>();
-        List<OrderItemEntity> listOrderItem = new ArrayList<>();
-        ProductEntity product = new ProductEntity("SP123", "ÁO THUN TRƠN CỔ ĐỨC KHUY NGỌC TRAI ", 50, 500.00);
+    private void callApiGetAllOrders() {
 
-        OrderItemEntity orderItemEntity = new OrderItemEntity();
-        orderItemEntity.setProduct(product);
-        orderItemEntity.setOrderItemId(1);
-        orderItemEntity.setOrderCode("DH001");
-        orderItemEntity.setQuantity(2);
-        orderItemEntity.setTotalPrice(10000.02);
-        orderItemEntity.setSize("S");
+        if(sessionManager.isLoggedIn()){
+            String token = sessionManager.getJwt();
+            String email = sessionManager.getCustom("email");
+            dialog = BaseActivity.openLoadingDialog(getContext());
 
-        listOrderItem.add(orderItemEntity);
+            ApiService.apiService.getAllOrders(token, email)
+                    .enqueue(new Callback<List<OrderEntity>>() {
+                        @Override
+                        public void onResponse(Call<List<OrderEntity>> call, Response<List<OrderEntity>> response) {
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                            list = response.body();
+                            OrderAdapter orderAdapter = new OrderAdapter(list, new IClickItemOrderListener() {
+                                @Override
+                                public void onClickOrder(OrderEntity orderEntity) {
+                                    replaceFragmentAndMoveData(orderEntity);
+                                }
+                            });
+                            recyclerView.setAdapter(orderAdapter);
+                        }
 
-        ProductEntity product2 = new ProductEntity("SP456", "ÁO SƠ MI NỮ", 50, 500.00);
-
-        OrderItemEntity orderItemEntity2 = new OrderItemEntity();
-        orderItemEntity2.setProduct(product2);
-        orderItemEntity2.setOrderItemId(2);
-        orderItemEntity2.setOrderCode("DH001");
-        orderItemEntity2.setQuantity(2);
-        orderItemEntity2.setTotalPrice(10000.02);
-        orderItemEntity2.setSize("S");
-
-        listOrderItem.add(orderItemEntity2);
-
-        OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setListOrderItem(listOrderItem);
-        orderEntity.setOrderCode("DH001");
-        orderEntity.setOrderDate(new Date());
-        orderEntity.setTotalPrice(10000.02);
-        orderEntity.setOrderState("Đã giao");
-
-        list.add(orderEntity);
-        return list;
+                        @Override
+                        public void onFailure(Call<List<OrderEntity>> call, Throwable throwable) {
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                            BaseActivity.openErrorDialog(getContext(), throwable.getMessage());
+                        }
+                    });
+        }
     }
 }
