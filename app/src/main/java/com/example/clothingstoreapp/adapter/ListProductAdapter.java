@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,7 +48,7 @@ public class ListProductAdapter extends RecyclerView.Adapter<ListProductAdapter.
 
         holder.textViewProductCode.setText(productEntity.getProductCode());
         holder.textViewProductName.setText(productEntity.getProductName());
-        String priceString = String.format(Locale.getDefault(), "%.2fđ", productEntity.getProductPrice());
+        String priceString = String.format(Locale.getDefault(), "%.3fđ", productEntity.getProductPrice());
         holder.textViewProductPrice.setText(priceString);
 
         //set ảnh
@@ -101,6 +102,12 @@ public class ListProductAdapter extends RecyclerView.Adapter<ListProductAdapter.
                     iClickItemProductListener.onClickAddProduct(productEntity);
                 }
             });
+            holder.productItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    iClickItemProductListener.onClickOpenDetail(productEntity);
+                }
+            });
         }
     }
 
@@ -124,6 +131,7 @@ public class ListProductAdapter extends RecyclerView.Adapter<ListProductAdapter.
                 textViewProductPrice;
 
         private View viewProductColor;
+        private LinearLayout productItem;
         public ListProductViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -133,6 +141,7 @@ public class ListProductAdapter extends RecyclerView.Adapter<ListProductAdapter.
             textViewProductPrice = itemView.findViewById(R.id.textView_product_price);
             viewProductColor = itemView.findViewById(R.id.view_product_color);
             imageViewAddProduct = itemView.findViewById(R.id.imageView_add_product);
+            productItem = itemView.findViewById(R.id.product_item);
         }
 
     }

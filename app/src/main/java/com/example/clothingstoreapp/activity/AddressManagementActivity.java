@@ -142,4 +142,13 @@ public class AddressManagementActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(fragmentTag);
         fragmentTransaction.commit();
     }
+
+    public void popFragmentOrderDetail(){
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+
+            getSupportFragmentManager().popBackStack();
+            currentFragment = FRAGMENT_ADDRESS_MANAGEMENT;
+            textViewTitle.setText("Quản lý địa chỉ");
+        }
+    }
 }

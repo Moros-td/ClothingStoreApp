@@ -107,9 +107,9 @@ public class BaseActivity extends AppCompatActivity {
         shopName = findViewById(R.id.shopName);
 
         // set số thông báo account
-        BadgeDrawable badgeDrawableAccount = bottomNavigationView.getOrCreateBadge(R.id.action_account);
-        badgeDrawableAccount.setVisible(true);
-        badgeDrawableAccount.setNumber(1000);
+//        BadgeDrawable badgeDrawableAccount = bottomNavigationView.getOrCreateBadge(R.id.action_account);
+//        badgeDrawableAccount.setVisible(true);
+//        badgeDrawableAccount.setNumber(1000);
 
         sessionManager = new SessionManager(BaseActivity.this);
     }

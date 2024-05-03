@@ -4,4 +4,5 @@ import com.example.clothingstoreapp.entity.ProductEntity;
 
 public interface IClickItemProductListener {
     void onClickAddProduct(ProductEntity product);
+    void onClickOpenDetail(ProductEntity product);
 }

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,19 +14,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.custom_interface.IClickOrderItemListener;
 import com.example.clothingstoreapp.entity.OrderItemEntity;
+import com.example.clothingstoreapp.entity.ProductEntity;
 
 import java.util.List;
 
 public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFullInfoAdapter.ProductInOrderViewHolder> implements Filterable {
     private List<OrderItemEntity> list;
+    private IClickOrderItemListener listener;
     @Override
     public Filter getFilter() {
         return null;
     }
 
-    public OrderItemFullInfoAdapter(List<OrderItemEntity> list) {
+    public OrderItemFullInfoAdapter(List<OrderItemEntity> list, IClickOrderItemListener listener) {
         this.list = list;
+        this.listener = listener;
     }
 
 
@@ -89,8 +94,15 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
                 holder.colorView.setBackgroundResource(R.drawable.circle_background_gray);
             }
             // sự kiện các nút
-//            if(iClickItemCartListener != null){
-//            }
+            if(listener != null){
+                holder.productItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ProductEntity product = orderItemEntity.getProduct();
+                        listener.onClickItemOrder(product);
+                    }
+                });
+            }
         }
     }
 
@@ -107,6 +119,7 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
                 productNameTextView, quantityTextView, sizeTextView, totalPriceTextView;
         private ImageView productImageView;
         private View colorView;
+        private LinearLayout productItem;
 
         public ProductInOrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -116,6 +129,7 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
             totalPriceTextView = itemView.findViewById(R.id.totalPriceTextView);
             productImageView = itemView.findViewById(R.id.productImageView);
             colorView = itemView.findViewById(R.id.colorView);
+            productItem = itemView.findViewById(R.id.productItem);
         }
     }
 }

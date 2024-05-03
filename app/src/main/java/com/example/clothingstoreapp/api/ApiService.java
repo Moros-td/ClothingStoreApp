@@ -139,6 +139,12 @@ public interface ApiService {
                                             @Field("address_id") int address_id);
 
     @FormUrlEncoded
+    @POST("/Address/DeleteAddress")
+    Call<BooleanResponse> DeleteAddress(@Header("Authorization") String token,
+                                            @Field("email") String email,
+                                            @Field("address_id") int address_id);
+
+    @FormUrlEncoded
     @POST("/Order/AddOrder")
     Call<OrderResponse> AddOrder(@Header("Authorization") String token,
                                  @Field("state") String state,
@@ -158,6 +164,7 @@ public interface ApiService {
     @POST("/Cart/DeleteAllItem")
     Call<BooleanResponse> DeleteAllItem(@Header("Authorization") String token, @Field("cart_code") String cart_code);
 
+    @FormUrlEncoded
     @POST("/Product/GetProductByCategory")
     Call<List<ProductEntity>> GetProductByCategory(@Field("category_id") int category_id);
     @FormUrlEncoded
@@ -184,4 +191,14 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/Order/cancelOrder")
     Call<LoginResponse> cancelOrder(@Header("Authorization") String token, @Field("orderCode") String orderCode);
+
+    @FormUrlEncoded
+    @POST("/Address/AddAddress")
+    Call<BooleanResponse> AddAddress(@Header("Authorization") String token, @Field("email") String email,
+                                        @Field("address") String address);
+
+    @FormUrlEncoded
+    @POST("/Address/UpdateAddress")
+    Call<BooleanResponse> UpdateAddress(@Header("Authorization") String token, @Field("email") String email,
+                                     @Field("address") String address, @Field("addressId") int addressId);
 }

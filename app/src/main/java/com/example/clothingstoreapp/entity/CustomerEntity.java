@@ -2,7 +2,9 @@ package com.example.clothingstoreapp.entity;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CustomerEntity {
+import java.io.Serializable;
+
+public class CustomerEntity implements Serializable {
     private String email;
     private String password;
     @SerializedName("full_name")
