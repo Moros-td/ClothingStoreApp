@@ -15,6 +15,15 @@ public class OrderItemEntity implements Serializable {
     private String size;
     @SerializedName("total_price")
     private Double totalPrice;
+    private int commentState;
+
+    public int getCommentState() {
+        return commentState;
+    }
+
+    public void setCommentState(int commentState) {
+        this.commentState = commentState;
+    }
 
     public int getOrderItemId() {
         return orderItemId;

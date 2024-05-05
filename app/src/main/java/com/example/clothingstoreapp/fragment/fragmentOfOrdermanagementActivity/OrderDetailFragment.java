@@ -1,9 +1,12 @@
 package com.example.clothingstoreapp.fragment.fragmentOfOrdermanagementActivity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.activity.AddCommentActivity;
 import com.example.clothingstoreapp.activity.BaseActivity;
 import com.example.clothingstoreapp.activity.OrderManagementActivity;
 import com.example.clothingstoreapp.activity.ProductDetailActivity;
@@ -52,6 +56,9 @@ public class OrderDetailFragment extends Fragment {
     SessionManager sessionManager;
     Dialog dialog;
 
+    OrderItemEntity orderItemEntityGlobal;
+    ActivityResultLauncher<Intent> activityLauncher;
+    OrderItemFullInfoAdapter orderItemFullInfoAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,6 +72,21 @@ public class OrderDetailFragment extends Fragment {
         paymentCodeTextView = mView.findViewById(R.id.paymentCodeTextView);
         paymentDateTextView = mView.findViewById(R.id.paymentDateTextView);
         sessionManager = new SessionManager(getContext());
+
+        activityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // Reload dữ liệu từ API và cập nhật RecyclerView
+                        for(int i = 0; i<list.size();i++){
+                            OrderItemEntity IOE = list.get(i);
+                            if(IOE.getOrderItemId() == orderItemEntityGlobal.getOrderItemId()){
+                                IOE.setCommentState(1);
+                            }
+                        }
+                        orderItemFullInfoAdapter.notifyDataSetChanged();
+                    }
+                });
 
         Bundle bundle = getArguments();
         if(bundle != null) {
@@ -81,11 +103,24 @@ public class OrderDetailFragment extends Fragment {
 
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(orderManagementActivity);
             recyclerView.setLayoutManager(linearLayoutManager);
+            String orderState = "";
+            if(orderEntity.getOrderState().equals("delivered")){
+                orderState = "delivered";
+            }
+            else{
+                orderState = "other";
+            }
 
-            OrderItemFullInfoAdapter orderItemFullInfoAdapter = new OrderItemFullInfoAdapter(list, new IClickOrderItemListener() {
+            orderItemFullInfoAdapter = new OrderItemFullInfoAdapter(list, orderState, new IClickOrderItemListener() {
                 @Override
                 public void onClickItemOrder(ProductEntity product) {
                     moveToDetailProductActivity(product);
+                }
+
+                @Override
+                public void onClickBtnComment(OrderItemEntity orderItemEntity) {
+                    orderItemEntityGlobal = orderItemEntity;
+                    moveDataToCommentActivity(orderItemEntity);
                 }
             });
             recyclerView.setAdapter(orderItemFullInfoAdapter);
@@ -123,6 +158,14 @@ public class OrderDetailFragment extends Fragment {
         Intent intent = new Intent(getContext(), ProductDetailActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    public void moveDataToCommentActivity(OrderItemEntity orderItemEntity){
+        Intent intent = new Intent(getActivity(), AddCommentActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("orderItem", orderItemEntity);
+        intent.putExtras(bundle); // Thêm dữ liệu để ẩn TextView
+        activityLauncher.launch(intent);
     }
 
     private void callApiCancelOrder(String orderCode) {

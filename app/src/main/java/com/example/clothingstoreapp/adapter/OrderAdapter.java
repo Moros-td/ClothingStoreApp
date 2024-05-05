@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -79,6 +80,18 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             holder.productRecyclerView.setLayoutManager(new LinearLayoutManager(orderManagementActivity));
             holder.productRecyclerView.setAdapter(orderItemLiteAdapter);
 
+            if(!"delivered".equals(orderEntity.getOrderState())){
+                holder.notifyTextView.setVisibility(View.GONE);
+            }else{
+                List<OrderItemEntity> OIList = orderEntity.getListOrderItem();
+                for (OrderItemEntity x:OIList) {
+                    if(x.getCommentState() == 0){
+                        holder.notifyTextView.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                }
+            }
+
             if(iClickItemOrderListener != null){
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -96,7 +109,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
 
     public class OrderViewHolder extends RecyclerView.ViewHolder {
-        private TextView orderCodeTextView, orderStateTextView, orderDateTextView, totalOrderPriceTextView;
+        private TextView orderCodeTextView, orderStateTextView, orderDateTextView, totalOrderPriceTextView,
+                notifyTextView;
         private RecyclerView productRecyclerView;
 
         public OrderViewHolder(@NonNull View itemView) {
@@ -106,6 +120,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             orderDateTextView = itemView.findViewById(R.id.orderDateTextView);
             totalOrderPriceTextView = itemView.findViewById(R.id.totalOrderPriceTextView);
             productRecyclerView = itemView.findViewById(R.id.rcv_product_in_order);
+            notifyTextView = itemView.findViewById(R.id.notifyTextView);
         }
     }
 }

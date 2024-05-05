@@ -113,4 +113,5 @@ public class OrderEntity implements Serializable {
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
     }
+
 }

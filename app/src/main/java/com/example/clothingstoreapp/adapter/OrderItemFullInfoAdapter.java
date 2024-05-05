@@ -3,6 +3,7 @@ package com.example.clothingstoreapp.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -23,14 +24,16 @@ import java.util.List;
 public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFullInfoAdapter.ProductInOrderViewHolder> implements Filterable {
     private List<OrderItemEntity> list;
     private IClickOrderItemListener listener;
+    private String orderState;
     @Override
     public Filter getFilter() {
         return null;
     }
 
-    public OrderItemFullInfoAdapter(List<OrderItemEntity> list, IClickOrderItemListener listener) {
+    public OrderItemFullInfoAdapter(List<OrderItemEntity> list, String orderState, IClickOrderItemListener listener) {
         this.list = list;
         this.listener = listener;
+        this.orderState = orderState;
     }
 
 
@@ -93,6 +96,13 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
             else if(orderItemEntity.getProduct().getProductColor().equals("gray")){
                 holder.colorView.setBackgroundResource(R.drawable.circle_background_gray);
             }
+            if(!orderState.equals("delivered")){
+                holder.btnDanhGia.setVisibility(View.GONE);
+            }else{
+                if(orderItemEntity.getCommentState() == 1){
+                    holder.btnDanhGia.setEnabled(false);
+                }
+            }
             // sự kiện các nút
             if(listener != null){
                 holder.productItem.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +110,12 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
                     public void onClick(View v) {
                         ProductEntity product = orderItemEntity.getProduct();
                         listener.onClickItemOrder(product);
+                    }
+                });
+                holder.btnDanhGia.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onClickBtnComment(orderItemEntity);
                     }
                 });
             }
@@ -120,6 +136,7 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
         private ImageView productImageView;
         private View colorView;
         private LinearLayout productItem;
+        private Button btnDanhGia;
 
         public ProductInOrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -130,6 +147,7 @@ public class OrderItemFullInfoAdapter extends RecyclerView.Adapter<OrderItemFull
             productImageView = itemView.findViewById(R.id.productImageView);
             colorView = itemView.findViewById(R.id.colorView);
             productItem = itemView.findViewById(R.id.productItem);
+            btnDanhGia = itemView.findViewById(R.id.btnDanhGia);
         }
     }
 }

@@ -130,10 +130,15 @@
                     android:textSize="20sp" />
 
             </LinearLayout>
-
-
         </LinearLayout>
 
-
+        <Button
+            android:id="@+id/btnDanhGia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đánh giá sản phảm"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="right"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

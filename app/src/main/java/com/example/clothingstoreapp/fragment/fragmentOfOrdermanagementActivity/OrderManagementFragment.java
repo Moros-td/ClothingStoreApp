@@ -13,8 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.clothingstoreapp.R;
+import com.example.clothingstoreapp.activity.AddCommentActivity;
 import com.example.clothingstoreapp.activity.BaseActivity;
 import com.example.clothingstoreapp.activity.CartBaseActivity;
+import com.example.clothingstoreapp.activity.CommentActivity;
 import com.example.clothingstoreapp.activity.OrderManagementActivity;
 import com.example.clothingstoreapp.adapter.CartAdapter;
 import com.example.clothingstoreapp.adapter.OrderAdapter;
@@ -58,7 +60,6 @@ public class OrderManagementFragment extends Fragment {
         callApiGetAllOrders();
         return mView;
     }
-
     public void replaceFragmentAndMoveData(OrderEntity orderEntity){
         Bundle bundle = new Bundle();
         bundle.putSerializable("order_entity", orderEntity);

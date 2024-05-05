@@ -3,6 +3,7 @@ package com.example.clothingstoreapp.api;
 import com.example.clothingstoreapp.entity.AddressEntity;
 import com.example.clothingstoreapp.entity.CartItemEnity;
 import com.example.clothingstoreapp.entity.CategoryEntity;
+import com.example.clothingstoreapp.entity.CommentEntity;
 import com.example.clothingstoreapp.entity.CustomerEntity;
 import com.example.clothingstoreapp.entity.OrderEntity;
 import com.example.clothingstoreapp.entity.ProductEntity;
@@ -201,4 +202,14 @@ public interface ApiService {
     @POST("/Address/UpdateAddress")
     Call<BooleanResponse> UpdateAddress(@Header("Authorization") String token, @Field("email") String email,
                                      @Field("address") String address, @Field("addressId") int addressId);
+
+    @FormUrlEncoded
+    @POST("/Comment/getAllCommentForProduct")
+    Call<List<CommentEntity>> getAllCommentForProduct(@Header("Authorization") String token, @Field("productCode") String productCode);
+
+    @FormUrlEncoded
+    @POST("/Comment/addComment")
+    Call<LoginResponse> addComment(@Header("Authorization") String token, @Field("email") String email,
+                                   @Field("orderItemId") int orderItemId, @Field("productCode") String productCode,
+                                   @Field("rating") float rating, @Field("comment") String comment);
 }
