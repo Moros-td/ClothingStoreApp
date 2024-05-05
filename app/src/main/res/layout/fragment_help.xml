@@ -6,14 +6,6 @@
     android:orientation="vertical"
     tools:context=".fragment.fragmenOfBaseActivity.HelpFragment">
 
-    <TextView
-        android:id="@+id/helpFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="THÔNG TIN LIÊN HỆ"
-        android:textSize="30dp"
-        android:gravity="center"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
