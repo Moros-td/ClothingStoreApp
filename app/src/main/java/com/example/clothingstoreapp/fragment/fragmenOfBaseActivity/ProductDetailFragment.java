@@ -57,7 +57,7 @@ public class ProductDetailFragment extends Fragment {
     private CircleIndicator indicator;
     private PhotoProductAdapter photoProductAdapter;
     private View mView, productColorView;
-    private TextView quantityTextView,productNameTextView, priceTextView, descriptionTextView,
+    private TextView quantityTextView, productNameTextView, priceTextView, descriptionTextView,
             averageRating, toltalNumComment, allCommentTextView;
     private ImageView subtractImageView, addImageView;
     private Button buttonS, buttonM, buttonL, buttonXL, buttonXXL, addProduct;
@@ -74,6 +74,7 @@ public class ProductDetailFragment extends Fragment {
     private List<CommentEntity> list;
     private CommentAdapter commentAdapter;
     private int quantity = 1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,8 +88,8 @@ public class ProductDetailFragment extends Fragment {
     }
 
     private void callApiGetAllCommentForProduct() {
-        if(productGlobal != null){
-            if(sessionManager.isLoggedIn()){
+        if (productGlobal != null) {
+            if (sessionManager.isLoggedIn()) {
                 String token = sessionManager.getJwt();
                 String productCode = productGlobal.getProductCode();
                 dialog = BaseActivity.openLoadingDialog(getContext());
@@ -103,10 +104,10 @@ public class ProductDetailFragment extends Fragment {
                                 list = response.body();
                                 List<CommentEntity> listComment = new ArrayList<>();
                                 int numComment = 3;
-                                if(list.size() < 3){
+                                if (list.size() < 3) {
                                     numComment = list.size();
                                 }
-                                for(int i = 0; i < numComment; i++){
+                                for (int i = 0; i < numComment; i++) {
                                     listComment.add(list.get(i));
                                 }
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -116,11 +117,14 @@ public class ProductDetailFragment extends Fragment {
 
                                 int totalComment = 0;
                                 double totalRating = 0;
-                                for (CommentEntity c: list) {
+                                for (CommentEntity c : list) {
                                     totalRating += c.getRating();
                                     totalComment += 1;
                                 }
-                                double aveRating = totalRating/totalComment;
+                                double aveRating = 0;
+                                if (totalComment != 0) {
+                                    aveRating = totalRating / totalComment;
+                                }
                                 DecimalFormat df = new DecimalFormat("#.#");
                                 df.setRoundingMode(RoundingMode.HALF_UP);
                                 aveRating = Double.parseDouble(df.format(aveRating));
@@ -128,6 +132,7 @@ public class ProductDetailFragment extends Fragment {
 
                                 averageRating.setText(String.valueOf(aveRating));
                                 toltalNumComment.setText(String.valueOf(totalComment) + " đánh giá");
+
                             }
 
                             @Override
@@ -276,7 +281,7 @@ public class ProductDetailFragment extends Fragment {
                         if (size != null) {
                             callApiGetCartCode(product, size);
                         } else {
-                            BaseActivity.openErrorDialog(getContext(),"Vui lòng chọn size!");
+                            BaseActivity.openErrorDialog(getContext(), "Vui lòng chọn size!");
                         }
 
                     }
@@ -292,7 +297,7 @@ public class ProductDetailFragment extends Fragment {
 
                 viewPager = mView.findViewById(R.id.viewPager);
                 indicator = mView.findViewById(R.id.indicator);
-                photoProductAdapter = new PhotoProductAdapter(getContext(),getListPhoto(product.getImages()));
+                photoProductAdapter = new PhotoProductAdapter(getContext(), getListPhoto(product.getImages()));
                 indicator.setViewPager(viewPager);
                 photoProductAdapter.registerDataSetObserver(indicator.getDataSetObserver());
                 viewPager.setAdapter(photoProductAdapter);
@@ -339,11 +344,11 @@ public class ProductDetailFragment extends Fragment {
 
     private List<Photo> getListPhoto(List<String> images) {
         List<Photo> list = new ArrayList<>();
-        for (String path: images) {
+        for (String path : images) {
             String pathImage = "";
             if (path != null && path.length() > 1) {
                 String newPath = path.substring(1);
-                pathImage = "http://10.0.2.2:8096"+newPath;
+                pathImage = "http://10.0.2.2:8096" + newPath;
             }
             list.add(new Photo(pathImage));
         }
@@ -374,6 +379,7 @@ public class ProductDetailFragment extends Fragment {
             }
         });
     }
+
     private void callApiPushProduct(ProductEntity product, String size, String cartCode) {
         Dialog dg = BaseActivity.openLoadingDialog(getContext());
         ApiService.apiService.AddProduct(sessionManager.getJwt(), cartCode,
@@ -383,7 +389,7 @@ public class ProductDetailFragment extends Fragment {
                 dg.dismiss();
                 if (response.isSuccessful()) {
                     BooleanResponse result = response.body();
-                    if ("done".equals(result.getSuccess())){
+                    if ("done".equals(result.getSuccess())) {
                         productDetailActivity.setCartBadge(productDetailActivity.getCartBadge() + 1);
                         BaseActivity.openSuccessDialog(getContext(), "Thêm sản phẩm thành công!");
                         // Đặt lại kích thước và số lượng mặc định
@@ -404,6 +410,7 @@ public class ProductDetailFragment extends Fragment {
         });
 
     }
+
     private void resetDefaultSizeAndQuantity() {
         // Đặt lại kích thước mặc định
         buttonS.setSelected(false);

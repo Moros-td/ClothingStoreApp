@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.example.clothingstoreapp.R;
 import com.example.clothingstoreapp.activity.AuthenticationActivity;
 import com.example.clothingstoreapp.activity.BaseActivity;
+import com.example.clothingstoreapp.activity.ProductDetailActivity;
 import com.example.clothingstoreapp.adapter.ProductAdapter;
 import com.example.clothingstoreapp.api.ApiService;
 import com.example.clothingstoreapp.custom_interface.IClickItemProductListener;
@@ -94,7 +95,11 @@ public class SearchFragment extends Fragment {
 
                     @Override
                     public void onClickOpenDetail(ProductEntity product) {
-
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("product", product);
+                        Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                     }
                 });
                 recyclerView.setAdapter(productAdapter);

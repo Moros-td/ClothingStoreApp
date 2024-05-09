@@ -96,13 +96,6 @@ public class CartAddressFragment extends Fragment {
                     iClickItemAddress = new IClickItemAddress() {
                         @Override
                         public void onClickChoose(AddressEntity addressEntity) {
-//                            recyclerView.post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    addressAdapter.notifyDataSetChanged();
-//                                }
-//                            });
-
                             Dialog dg = BaseActivity.openLoadingDialog(getContext());
                             ApiService.apiService.SetAddressDefault(sessionManager.getJwt(), sessionManager.getCustom("email"), addressEntity.getAddress_id()).enqueue(new Callback<BooleanResponse>() {
                                 @Override
