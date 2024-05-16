@@ -89,61 +89,58 @@ public class ProductDetailFragment extends Fragment {
 
     private void callApiGetAllCommentForProduct() {
         if (productGlobal != null) {
-            if (sessionManager.isLoggedIn()) {
-                String token = sessionManager.getJwt();
-                String productCode = productGlobal.getProductCode();
-                dialog = BaseActivity.openLoadingDialog(getContext());
-                ApiService.apiService.getAllCommentForProduct(token, productCode)
-                        .enqueue(new Callback<List<CommentEntity>>() {
-                            @Override
-                            public void onResponse(Call<List<CommentEntity>> call, Response<List<CommentEntity>> response) {
-                                if (dialog != null && dialog.isShowing()) {
-                                    dialog.dismiss();
-                                }
-
-                                list = response.body();
-                                List<CommentEntity> listComment = new ArrayList<>();
-                                int numComment = 3;
-                                if (list.size() < 3) {
-                                    numComment = list.size();
-                                }
-                                for (int i = 0; i < numComment; i++) {
-                                    listComment.add(list.get(i));
-                                }
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-                                commentRCV.setLayoutManager(linearLayoutManager);
-                                commentAdapter = new CommentAdapter(listComment);
-                                commentRCV.setAdapter(commentAdapter);
-
-                                int totalComment = 0;
-                                double totalRating = 0;
-                                for (CommentEntity c : list) {
-                                    totalRating += c.getRating();
-                                    totalComment += 1;
-                                }
-                                double aveRating = 0;
-                                if (totalComment != 0) {
-                                    aveRating = totalRating / totalComment;
-                                }
-                                DecimalFormat df = new DecimalFormat("#.#");
-                                df.setRoundingMode(RoundingMode.HALF_UP);
-                                aveRating = Double.parseDouble(df.format(aveRating));
-                                ratingBarAVE.setRating((float) aveRating);
-
-                                averageRating.setText(String.valueOf(aveRating));
-                                toltalNumComment.setText(String.valueOf(totalComment) + " đánh giá");
-
+            String productCode = productGlobal.getProductCode();
+            dialog = BaseActivity.openLoadingDialog(getContext());
+            ApiService.apiService.getAllCommentForProduct(productCode)
+                    .enqueue(new Callback<List<CommentEntity>>() {
+                        @Override
+                        public void onResponse(Call<List<CommentEntity>> call, Response<List<CommentEntity>> response) {
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
                             }
 
-                            @Override
-                            public void onFailure(Call<List<CommentEntity>> call, Throwable throwable) {
-                                if (dialog != null && dialog.isShowing()) {
-                                    dialog.dismiss();
-                                }
-                                BaseActivity.openErrorDialog(getContext(), "Không thể truy cập api");
+                            list = response.body();
+                            List<CommentEntity> listComment = new ArrayList<>();
+                            int numComment = 3;
+                            if (list.size() < 3) {
+                                numComment = list.size();
                             }
-                        });
-            }
+                            for (int i = 0; i < numComment; i++) {
+                                listComment.add(list.get(i));
+                            }
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                            commentRCV.setLayoutManager(linearLayoutManager);
+                            commentAdapter = new CommentAdapter(listComment);
+                            commentRCV.setAdapter(commentAdapter);
+
+                            int totalComment = 0;
+                            double totalRating = 0;
+                            for (CommentEntity c : list) {
+                                totalRating += c.getRating();
+                                totalComment += 1;
+                            }
+                            double aveRating = 0;
+                            if (totalComment != 0) {
+                                aveRating = totalRating / totalComment;
+                            }
+                            DecimalFormat df = new DecimalFormat("#.#");
+                            df.setRoundingMode(RoundingMode.HALF_UP);
+                            aveRating = Double.parseDouble(df.format(aveRating));
+                            ratingBarAVE.setRating((float) aveRating);
+
+                            averageRating.setText(String.valueOf(aveRating));
+                            toltalNumComment.setText(String.valueOf(totalComment) + " đánh giá");
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<CommentEntity>> call, Throwable throwable) {
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                            BaseActivity.openErrorDialog(getContext(), "Không thể truy cập api");
+                        }
+                    });
         }
     }
 

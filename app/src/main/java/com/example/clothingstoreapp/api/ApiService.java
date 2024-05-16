@@ -205,7 +205,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/Comment/getAllCommentForProduct")
-    Call<List<CommentEntity>> getAllCommentForProduct(@Header("Authorization") String token, @Field("productCode") String productCode);
+    Call<List<CommentEntity>> getAllCommentForProduct(@Field("productCode") String productCode);
 
     @FormUrlEncoded
     @POST("/Comment/addComment")

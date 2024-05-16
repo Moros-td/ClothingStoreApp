@@ -42,6 +42,7 @@ public class CommentActivity extends AppCompatActivity {
     private RecyclerView commentRCV;
     private SessionManager sessionManager;
     Dialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +51,7 @@ public class CommentActivity extends AppCompatActivity {
         setEvent();
 
         Bundle bundle = getIntent().getExtras();
-        if(bundle == null){
+        if (bundle == null) {
             return;
         }
         // Kiểm tra xem dữ liệu đã được truyền qua không
@@ -100,33 +101,30 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     private void callApiGetAllCommentForProduct(String productCode) {
-            if(sessionManager.isLoggedIn()){
-                String token = sessionManager.getJwt();
-                dialog = BaseActivity.openLoadingDialog(CommentActivity.this);
-                ApiService.apiService.getAllCommentForProduct(token, productCode)
-                        .enqueue(new Callback<List<CommentEntity>>() {
-                            @Override
-                            public void onResponse(Call<List<CommentEntity>> call, Response<List<CommentEntity>> response) {
-                                if (dialog != null && dialog.isShowing()) {
-                                    dialog.dismiss();
-                                }
+        dialog = BaseActivity.openLoadingDialog(CommentActivity.this);
+        ApiService.apiService.getAllCommentForProduct(productCode)
+                .enqueue(new Callback<List<CommentEntity>>() {
+                    @Override
+                    public void onResponse(Call<List<CommentEntity>> call, Response<List<CommentEntity>> response) {
+                        if (dialog != null && dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
 
-                                list = response.body();
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CommentActivity.this);
-                                commentRCV.setLayoutManager(linearLayoutManager);
-                                commentAdapter = new CommentAdapter(list);
-                                commentRCV.setAdapter(commentAdapter);
+                        list = response.body();
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CommentActivity.this);
+                        commentRCV.setLayoutManager(linearLayoutManager);
+                        commentAdapter = new CommentAdapter(list);
+                        commentRCV.setAdapter(commentAdapter);
 
-                            }
+                    }
 
-                            @Override
-                            public void onFailure(Call<List<CommentEntity>> call, Throwable throwable) {
-                                if (dialog != null && dialog.isShowing()) {
-                                    dialog.dismiss();
-                                }
-                                BaseActivity.openErrorDialog(CommentActivity.this, "Không thể truy cập api");
-                            }
-                        });
-            }
-        }
+                    @Override
+                    public void onFailure(Call<List<CommentEntity>> call, Throwable throwable) {
+                        if (dialog != null && dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+                        BaseActivity.openErrorDialog(CommentActivity.this, "Không thể truy cập api");
+                    }
+                });
+    }
 }
